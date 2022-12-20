@@ -1,6 +1,6 @@
 from django import forms
 from django.template.loader import render_to_string
-from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.forms import PasswordResetForm, UserCreationForm, SetPasswordForm
 from django.contrib.auth import get_user_model, password_validation
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError

@@ -11,14 +11,13 @@ from django.contrib import messages
 
 from . mixins import LogoutRequiredMixin
 from . senders import Util, email_verification_generate_token
-from . forms import CustomPasswordResetForm, CustomSetPasswordForm, CustomUserCreationForm, PhoneVerificationForm
+from . forms import CustomPasswordResetForm, CustomSetPasswordForm, CustomUserCreationForm
 import json
 
 User = get_user_model()
 
 class RegisterView(LogoutRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        # request.session['name'] = 'akdsd'
         print(request.session.get('name'))
         form = CustomUserCreationForm()
 
