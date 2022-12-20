@@ -40,6 +40,8 @@ THEME_CHOICES = (
 class User(AbstractBaseUser, PermissionsMixin):
     pkid = models.BigAutoField(primary_key=True, editable=False)
     id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    first_name = models.CharField(verbose_name=(_("First name")), max_length=255, null=True)
+    last_name = models.CharField(verbose_name=(_("Last name")), max_length=255, null=True)
     email = models.EmailField(verbose_name=(_("Email address")), unique=True)
     phone = models.CharField(max_length=20, verbose_name=(_('Phone Number')), unique=True)
     tz = models.ForeignKey(Timezone, on_delete=models.SET_NULL, verbose_name=(_('Timezone')), null=True)
@@ -52,7 +54,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(default=timezone.now)
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ["first_name", "last_name"]
 
     objects = CustomUserManager()
 

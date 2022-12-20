@@ -18,21 +18,20 @@ User = get_user_model()
 
 class RegisterView(LogoutRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        print(request.session.get('name'))
         form = CustomUserCreationForm()
 
         context = {'form': form}
-        return render(request, "accounts/register.html", context)
+        return render(request, "accounts/signup.html", context)
 
     def post(self, request, *args, **kwargs):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             Util.send_verification_email(request, user)
-            messages.success(request, 'Registration successful', extra_tags='toast')
+            messages.success(request, 'Registration successful')
             return render(request, 'accounts/email-activation-request.html', {'detail':'sent', 'email':user.email})
         
-        return render(request, "accounts/register.html", {'form': form})
+        return render(request, "accounts/signup.html", {'form': form})
 
 class VerifyEmail(LogoutRequiredMixin, View):
     def get(self, request, *args, **kwargs):

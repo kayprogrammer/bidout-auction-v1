@@ -1,0 +1,91 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+  <!-- Header Section -->
+  <div class="container-fluid bg-danger py-5 text-white">
+      <div class="row pt-5">
+          <div class="col-12 col-lg-10">
+              <h1 class="display-5 fw-bold ms-0 ps-0 ms-md-5 ps-md-5 pt-3">Sign Up</h1>
+          </div>
+      </div>
+  </div>
+  <main>
+      <div class="container">
+          <div class="row py-5 justify-content-center">
+              <div class="col-10 col-md-6 signup-form px-5 py-2">
+                  <div class="form-head text-center mb-5">
+                      <h3>Sign Up</h3>
+                      <p>Do you already have an account? <a class="fw-bold text-danger" href="{% url 'login' %}">Log In Here!</a></p>
+                  </div>
+                  <div class="form-body">
+                      <form method="POST" class="">
+                        {% csrf_token %}
+                        <div class="vstack gap-3 m-0 p-0">
+                          <div class="names d-grid gap-4">
+
+                              <div class="">
+                                  <span>
+                                      <label for="firstname">First Name*</label>
+                                      {{form.first_name}}
+                                  </span>
+                              </div>
+                              <div class="">
+                                  <span>
+                                      <label for="lastname">Last Name*</label>
+                                      {{form.last_name}}
+                                  </span>
+                              </div>
+                          </div>
+                          <div class="">
+                              <span>
+                                  <label for="email">Your Email Address*</label>
+                                  {{form.email}}
+                              </span>
+                          </div>
+                          <div class="">
+                            <span>
+                                <label for="tz">Timezone*</label>
+                                {{form.tz}}
+                            </span>
+                          </div>
+                          <div class="">
+                              <span>
+                                  <label for="password1">Password*</label>
+                                  {{form.password1}}
+                              </span>
+                          </div>
+                          <div class="">
+                            <span>
+                                <label for="password2">Confirm*</label>
+                                {{form.password2}}
+                            </span>
+                          </div>
+                          <div class="">
+                              <span>
+                                  <p class="d-flex gap-3 align-items-center">
+                                      {{form.terms_agreement}}
+                                      I agree to the Terms & Policy
+                                  </p>
+                              </span>
+                          </div>
+                          <div class="">
+                              <span>
+                                  <button type="submit" class="w-100 btn btn-danger mt-1">Sign Up</button>
+                              </span>
+                          </div>
+                        </div>
+                      </form>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </main>
+{% endblock %}
+
+{% block js %}
+  <script type="text/javascript">
+    
+  </script>
+{% endblock %}

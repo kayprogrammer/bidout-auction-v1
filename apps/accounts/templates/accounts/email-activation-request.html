@@ -1,0 +1,60 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}
+	{% if detail == 'request' %}
+		Unverified Email Address
+	{% else %}
+		Email Activation Sent
+	{% endif %}
+{% endblock %}
+{% block content %}
+    <!-- Header Section -->
+    <div class="container-fluid bg-danger py-5 text-white">
+        <div class="row pt-5">
+            <div class="col-12 col-lg-10">
+                <h1 class="display-5 fw-bold ms-0 ps-0 ms-md-5 ps-md-5 pt-3">
+                    {% if detail == 'request' %}
+                        Unverified Email Address
+                    {% else %}
+                        Email Activation Sent
+                    {% endif %}
+                </h1>
+            </div>
+        </div>
+    </div>
+    <main>
+        <div class="container">
+            <div class="row py-5 justify-content-center">
+                <div class="col-10 col-md-6 signup-form px-5 py-2">
+                    <div class="form-head text-center mb-5">
+                        <h3>
+                            {% if detail == 'request' %}
+                                Get activated
+                            {% else %}
+                                Activation Sent
+                            {% endif %}
+                        </h3>
+                        <p>Already activated? <a class="fw-bold text-danger" href="{% url 'login' %}">Login Here!</a></p>
+                    </div>
+                    <div class="form-body">
+                        <form method="POST" class="">
+                          {% csrf_token %}
+                           <div class="vstack gap-3 m-0 p-0">
+                            {% if detail == 'request' %}
+                                <p>Your email address is yet to be verified. Check your email or click below to resend activation link</p>
+                            {% else %}
+                                <p>Check your email for {% if detail == 'resent' %}new {% endif %}activation link!</p>
+                            {% endif %}
+                            <div class="">
+                                <span>
+                                    <button onclick="window.location=`{% url 'resend-activation-email' %}`" class="w-100 btn btn-success mt-1">RESEND ACTIVATION EMAIL</button>
+                                </span>
+                            </div>
+                          </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

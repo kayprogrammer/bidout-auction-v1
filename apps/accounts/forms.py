@@ -1,6 +1,6 @@
 from django import forms
 from django.template.loader import render_to_string
-from django.contrib.auth.forms import PasswordResetForm, UserCreationForm, SetPasswordForm
+from django.contrib.auth.forms import PasswordResetForm, UserCreationForm, SetPasswordForm, UserChangeForm
 from django.contrib.auth import get_user_model, password_validation
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
@@ -11,6 +11,20 @@ from  . models import Timezone
 from . senders import Util, MessageThread
 
 User = get_user_model()
+
+#-----ADMIN USER CREATION AND AUTHENTICATION------------#
+class CustomAdminUserCreationForm(UserCreationForm):
+    class Meta(UserCreationForm):
+        model = User
+        fields = ["email", "first_name", "last_name"]
+        error_class = "error"
+
+
+class CustomAdminUserChangeForm(UserChangeForm):
+    class Meta:
+        model = User
+        fields = ["email", "first_name", "last_name"]
+        error_class = "error"
 
 #-----GENERAL USER CREATION AND AUTHENTICATION-------------#
 class CustomErrorMessages:
@@ -30,7 +44,7 @@ class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
     last_name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
     email = forms.EmailField(error_messages=CustomErrorMessages.email, widget=forms.EmailInput(attrs={"class": "form-control"}))
-    tz = forms.ModelChoiceField(error_messages=CustomErrorMessages.tz, queryset=Timezone.objects.all())
+    tz = forms.ModelChoiceField(error_messages=CustomErrorMessages.tz, queryset=Timezone.objects.all(), widget=forms.Select(attrs={"class": "form-control"}))
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={"class": "form-control"}))
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={"class": "form-control"}))
     terms_agreement = forms.BooleanField(widget=forms.CheckboxInput(attrs={"id": "termsApply"}))

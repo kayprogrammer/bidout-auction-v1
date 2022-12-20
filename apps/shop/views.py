@@ -1,15 +1,9 @@
 from django.shortcuts import render
-from django.urls import reverse
 from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-# Create your views here.
-
-class IndexView(View):
-    def get(self, request, *args, **kwargs):
-        return redirect(reverse('shop:home'))
-
-class HomeView(View):
+class DashboardView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
 
         context = {}
-        return render(request, 'shop/main.html', context)
+        return render(request, 'shop/dashboard.html', context)
