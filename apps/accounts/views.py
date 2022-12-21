@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from django.urls import reverse
 from django.views import View
 from django.contrib.auth import authenticate, login, logout
@@ -56,13 +57,8 @@ class VerifyEmail(LogoutRequiredMixin, View):
             if email_verification_generate_token.check_token(user, kwargs.get('token')):
                 user.is_email_verified = True
                 user.save()
-                if not user.is_phone_verified:
-                    Util.send_sms_otp(user)
-                    request.session['verification_phone'] = user.phone
-                    messages.success(request, 'Activation successful!. Verify your phone now!')
-                    return redirect(reverse('verify-phone'))
-
-                messages.success(request, 'Activation successful!. You can login now!')
+                messages.success(request, 'Activation successful!')
+                request.session['activation_email'] = None
                 Util.send_welcome_email(request, user)
                 return redirect(reverse("login"))
 
@@ -73,14 +69,16 @@ class ResendActivationEmail(LogoutRequiredMixin, View):
         email = request.COOKIES.get('activation_email')
         user = User.objects.filter(email=email)
         if not user.exists():
-            messages.error(request, 'Something went wrong')
+            messages.error(request, 'Not allowed!')
             return redirect(reverse('login'))
         user = user.first()
         if user.is_email_verified:
-            messages.warning(request, 'Email address already verified')
+            messages.info(request, 'Email address already verified')
+            request.session['activation_email'] = None
             return redirect(reverse('login'))
 
         Util.send_verification_email(request, user)
+        messages.success(request, 'Sent')
         return render(request, 'accounts/email-activation-request.html', {'detail':'resent', 'email':email})
 
 class LoginView(LogoutRequiredMixin, View):
@@ -88,24 +86,19 @@ class LoginView(LogoutRequiredMixin, View):
         return render(request, "accounts/login.html")
 
     def post(self, request, *args, **kwargs):
-        email_or_phone = request.POST.get('email_or_phone')
+        email = request.POST.get('email')
         password = request.POST.get('password')
-        user = authenticate(request, username=email_or_phone, password=password)
+        user = authenticate(request, username=email, password=password)
         if not user:
-            messages.error(request, 'Invalid credentials', extra_tags='toast')
+            messages.error(request, 'Invalid credentials')
             return redirect('/accounts/login/')
 
         if not user.is_email_verified:
             Util.send_verification_email(request, user)
             return render(request, 'accounts/email-activation-request.html', {'detail':'request', 'email':user.email})
 
-        if not user.is_phone_verified:
-            Util.send_sms_otp(user)
-            request.session['verification_phone'] = user.phone
-            return redirect(reverse('verify-phone'))
-
         login(request, user)
-        return redirect('/')
+        return redirect(reverse('dashboard'))
 
 class LogoutView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):

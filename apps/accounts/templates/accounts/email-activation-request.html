@@ -34,27 +34,35 @@
                                 Activation Sent
                             {% endif %}
                         </h3>
-                        <p>Already activated? <a class="fw-bold text-danger" href="{% url 'login' %}">Login Here!</a></p>
+                        {% if detail != 'request' and detail != 'sent'  %}
+                            <p>Already activated? <a class="fw-bold text-danger" href="{% url 'login' %}">Login Here!</a></p>
+                        {% endif %}
                     </div>
                     <div class="form-body">
-                        <form method="POST" class="">
-                          {% csrf_token %}
-                           <div class="vstack gap-3 m-0 p-0">
-                            {% if detail == 'request' %}
-                                <p>Your email address is yet to be verified. Check your email or click below to resend activation link</p>
-                            {% else %}
-                                <p>Check your email for {% if detail == 'resent' %}new {% endif %}activation link!</p>
-                            {% endif %}
-                            <div class="">
-                                <span>
-                                    <button onclick="window.location=`{% url 'resend-activation-email' %}`" class="w-100 btn btn-success mt-1">RESEND ACTIVATION EMAIL</button>
-                                </span>
-                            </div>
-                          </div>
-                        </form>
+                        {% csrf_token %}
+                        <div class="vstack gap-3 m-0 p-0">
+                        {% if detail == 'request' %}
+                            <p>Your email address is yet to be verified. Check your email or click below to resend activation link</p>
+                        {% else %}
+                            <p>Check your email for {% if detail == 'resent' %}new {% endif %}activation link!</p>
+                        {% endif %}
+                        <div class="">
+                            <span>
+                                <button onclick="window.location=`{% url 'resend-activation-email' %}`" class="w-100 btn btn-success mt-1">RESEND ACTIVATION EMAIL</button>
+                            </span>
+                        </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </main>
+{% endblock %}
+
+{% block js %}
+	<script>
+		window.onload = function() {
+			document.cookie = 'activation_email=' + '{{email}}' + ";domain=;path=/"
+		}
+	</script>
 {% endblock %}

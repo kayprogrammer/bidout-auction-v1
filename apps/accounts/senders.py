@@ -29,7 +29,7 @@ class Util:
         current_site = f'{request.scheme}://{request.get_host()}'
         subject = 'Activate your account'
         message = render_to_string('accounts/email-activation-message.html', {
-            'name':user.name, 
+            'name':f'{user.first_name} {user.last_name}', 
             'domain':current_site, 
             'site_name': settings.SITE_NAME,
             'uid': urlsafe_base64_encode(force_bytes(user.id)),
@@ -48,7 +48,7 @@ class Util:
         subject = 'Account Verified'
         message = render_to_string('accounts/welcomemessage.html', {
             'domain':current_site,
-            'name':user.name, 
+            'name':f'{user.first_name} {user.last_name}', 
             'site_name': settings.SITE_NAME,
         })
 

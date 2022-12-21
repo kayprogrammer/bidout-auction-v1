@@ -24,56 +24,32 @@
                         {% csrf_token %}
                         <div class="vstack gap-3 m-0 p-0">
                           <div class="names d-grid gap-4">
-
-                              <div class="">
+                            {% for field in form %}
+                              {% if not field.name == 'terms_agreement' %}
+                                <div class="">
                                   <span>
-                                      <label for="firstname">First Name*</label>
-                                      {{form.first_name}}
+                                      <label for="{{field.name}}">{{field.label}}*</label>
+                                      {{field}}
+                                      {% for error in field.errors  %}
+                                        <p style="text-align: left; margin-top: 5px; font-size: 12px; color: red;">{{error}}</p>
+                                      {% endfor %}
                                   </span>
-                              </div>
-                              <div class="">
-                                  <span>
-                                      <label for="lastname">Last Name*</label>
-                                      {{form.last_name}}
-                                  </span>
-                              </div>
-                          </div>
-                          <div class="">
-                              <span>
-                                  <label for="email">Your Email Address*</label>
-                                  {{form.email}}
-                              </span>
-                          </div>
-                          <div class="">
-                            <span>
-                                <label for="tz">Timezone*</label>
-                                {{form.tz}}
-                            </span>
-                          </div>
-                          <div class="">
-                              <span>
-                                  <label for="password1">Password*</label>
-                                  {{form.password1}}
-                              </span>
-                          </div>
-                          <div class="">
-                            <span>
-                                <label for="password2">Confirm*</label>
-                                {{form.password2}}
-                            </span>
-                          </div>
-                          <div class="">
-                              <span>
-                                  <p class="d-flex gap-3 align-items-center">
-                                      {{form.terms_agreement}}
-                                      I agree to the Terms & Policy
-                                  </p>
-                              </span>
-                          </div>
-                          <div class="">
-                              <span>
-                                  <button type="submit" class="w-100 btn btn-danger mt-1">Sign Up</button>
-                              </span>
+                                </div>
+                              {% endif %}
+                            {% endfor %}
+                            <div class="">
+                                <span>
+                                    <p class="d-flex gap-3 align-items-center">
+                                        {{form.terms_agreement}}
+                                        I agree to the Terms & Policy
+                                    </p>
+                                </span>
+                            </div>
+                            <div class="">
+                                <span>
+                                    <button type="submit" class="w-100 btn btn-danger mt-1">Sign Up</button>
+                                </span>
+                            </div>
                           </div>
                         </div>
                       </form>
@@ -86,6 +62,20 @@
 
 {% block js %}
   <script type="text/javascript">
-    
+    window.onload = function(){
+      var localtz = Intl.DateTimeFormat().resolvedOptions().timeZone // Get local timezone
+      var select_element = document.getElementById('id_tz') // Get select element
+      var options = Array.from(document.querySelectorAll('option')); 
+      
+      try{
+          var optionMatch = options.find(el => {
+              return el.textContent == localtz;
+          });
+
+          select_element.value = optionMatch.value
+      }catch{
+          select_element.value = ''                
+      }
+    }
   </script>
 {% endblock %}

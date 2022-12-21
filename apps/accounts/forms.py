@@ -41,12 +41,12 @@ class CustomErrorMessages:
         'does_not_exist': 'Invalid timezone',
     }
 class CustomUserCreationForm(UserCreationForm):
-    first_name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
-    last_name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
-    email = forms.EmailField(error_messages=CustomErrorMessages.email, widget=forms.EmailInput(attrs={"class": "form-control"}))
-    tz = forms.ModelChoiceField(error_messages=CustomErrorMessages.tz, queryset=Timezone.objects.all(), widget=forms.Select(attrs={"class": "form-control"}))
-    password1 = forms.CharField(widget=forms.PasswordInput(attrs={"class": "form-control"}))
-    password2 = forms.CharField(widget=forms.PasswordInput(attrs={"class": "form-control"}))
+    first_name = forms.CharField(label="First name", widget=forms.TextInput(attrs={"class": "form-control"}))
+    last_name = forms.CharField(label="Last name", widget=forms.TextInput(attrs={"class": "form-control"}))
+    email = forms.EmailField(label="Your email address", error_messages=CustomErrorMessages.email, widget=forms.EmailInput(attrs={"class": "form-control"}))
+    tz = forms.ModelChoiceField(label="Timezone", error_messages=CustomErrorMessages.tz, queryset=Timezone.objects.all(), widget=forms.Select(attrs={"class": "form-control"}))
+    password1 = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={"class": "form-control"}))
+    password2 = forms.CharField(label="Confirm", widget=forms.PasswordInput(attrs={"class": "form-control"}))
     terms_agreement = forms.BooleanField(widget=forms.CheckboxInput(attrs={"id": "termsApply"}))
 
     class Meta:
@@ -60,7 +60,7 @@ class CustomPasswordResetForm(PasswordResetForm):
     email = forms.EmailField(
         label=_("Email"),
         max_length=254,
-        widget=forms.EmailInput(attrs={"autocomplete": "email", "placeholder": "Email Address"}),
+        widget=forms.EmailInput(attrs={"autocomplete": "email", "class": "form-control"}),
     )
 
     def send_mail(
@@ -79,9 +79,12 @@ class CustomPasswordResetForm(PasswordResetForm):
         # Email subject *must not* contain newlines
         subject = "".join(subject.splitlines())
         body = render_to_string(email_template_name, context)
-
+        user = User.objects.filter(email=to_email)
+        if user.exists():
+            context['name'] = f'{user[0].first_name} {user[0].last_name}'
         email_message = EmailMultiAlternatives(subject, body, from_email, [to_email])
         if html_email_template_name is not None:
+            context['name']
             html_email = render_to_string(html_email_template_name, context)
             email_message.attach_alternative(html_email, "text/html")
 
@@ -91,12 +94,12 @@ class CustomSetPasswordForm(SetPasswordForm):
     # Taken from django.contrib.auth.forms
     new_password1 = forms.CharField(
         label=_("New password"),
-        widget=forms.PasswordInput(attrs={"autocomplete": "new-password", "placeholder": "New Password"}),
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password", "class": "form-control"}),
         strip=False,
         help_text=password_validation.password_validators_help_text_html(),
     )
     new_password2 = forms.CharField(
-        label=_("New password confirmation"),
+        label=_("Confirm"),
         strip=False,
-        widget=forms.PasswordInput(attrs={"autocomplete": "new-password", "placeholder": "Repeat New Password"}),
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password", "class": "form-control"}),
     )

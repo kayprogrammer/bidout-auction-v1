@@ -41,7 +41,6 @@ class UserAdmin(BaseUserAdmin):
         "email",
         "first_name",
         "last_name",
-        "phone",
         "is_staff",
         "is_active",
     ]
