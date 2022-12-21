@@ -50,7 +50,8 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     'apps.accounts',
     'apps.common',
-    'apps.shop',
+    'apps.listings',
+    'apps.general',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -67,7 +68,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'apps.common.middlewares.TimezoneMiddleware',
+    'apps.general.middlewares.TimezoneMiddleware',
 ]
 
 ROOT_URLCONF = 'bidout.urls'

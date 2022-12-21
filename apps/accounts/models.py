@@ -44,7 +44,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(verbose_name=(_("Last name")), max_length=255, null=True)
     email = models.EmailField(verbose_name=(_("Email address")), unique=True)
     tz = models.ForeignKey(Timezone, on_delete=models.SET_NULL, verbose_name=(_('Timezone')), null=True)
-    avatar = models.ImageField(upload_to="whatsappclonev1/avatars/", null=True)
+    avatar = models.ImageField(upload_to="bidout-auction-v1/avatars/", null=True)
 
     terms_agreement = models.BooleanField(default=False)
     is_email_verified = models.BooleanField(default=False)

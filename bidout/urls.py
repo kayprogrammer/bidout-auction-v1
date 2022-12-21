@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.urls import include, path
 from django.conf.urls.static import static
 from django.conf import settings
-from apps.common import views
 
 import debug_toolbar
 # handler404 = views.handler404
@@ -11,8 +10,8 @@ import debug_toolbar
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('apps.accounts.urls')),
-    path('', include('apps.common.urls')),
-    path('shop/', include('apps.shop.urls')),
+    path('', include('apps.general.urls')),
+    path('shop/', include('apps.listings.urls')),
     path('__debug__/', include(debug_toolbar.urls)),
 ]
 
