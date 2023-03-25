@@ -52,7 +52,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     email = models.EmailField(verbose_name=(_("Email address")), unique=True)
     tz = models.ForeignKey(
-        Timezone, on_delete=models.SET_NULL, verbose_name=(_("Timezone")), null=True
+        Timezone,
+        on_delete=models.SET_NULL,
+        verbose_name=(_("Timezone")),
+        null=True,
     )
     avatar = models.ImageField(upload_to="bidout-auction-v1/avatars/", null=True)
 
@@ -80,8 +83,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         try:
             url = self.avatar.url
         except:
-            url = "https://res.cloudinary.com/kay-development/image/upload/v1667610903/whatsappclonev1/default/Avatar-10_mvq1cm.jpg"
+            url = "https://res.cloudinary.com/kay-development/image/upload/v1679787683/important/brad_dozo7x.jpg"
         return url
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return self.full_name

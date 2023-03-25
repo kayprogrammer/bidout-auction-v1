@@ -54,6 +54,4 @@ class Review(TimeStampedUUIDModel):
     text = models.TextField(max_length=100)
 
     def __str__(self):
-        if self.user:
-            return self.user
-        return self.name
+        return self.user.full_name

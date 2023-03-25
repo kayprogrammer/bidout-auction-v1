@@ -27,39 +27,26 @@ def create_initial_listings(sender, **kwargs):
             #############################
             """
         )
-        dir_list = os.listdir(test_images_directory)
-        file_storage = MediaCloudinaryStorage()
         auctioneer = User.objects.filter(email="testauctioneer@email.com")
         if not auctioneer.exists():
-            avatar = None
-            for img in dir_list:
-                if str(img) == "tester.png":
-                    avatar = img
-            image_path = os.path.join(test_images_directory, avatar)
-            with open(image_path, "rb") as f:
-                file_name = os.path.basename(avatar)
-                file_content = ContentFile(f.read())
-                file_path = file_storage.save(
-                    f"listings/avatar/{file_name}", file_content
-                )
-                auctioneer = User.objects.create_user(
-                    first_name="John",
-                    last_name="Doe",
-                    email="testauctioneer@email.com",
-                    password="testauctioneer",
-                    avatar=file_path,
-                )
+            auctioneer = User.objects.create_user(
+                first_name="John",
+                last_name="Doe",
+                email="testauctioneer@email.com",
+                password="testauctioneer",
+            )
         else:
             auctioneer = auctioneer.get()
 
         listings = []
-        dir_list.remove("tester.png")
-        for idx, image_file in enumerate(dir_list):
+        for idx, image_file in enumerate(os.listdir(test_images_directory)):
             if image_file.endswith(".png"):
                 image_path = os.path.join(test_images_directory, image_file)
                 with open(image_path, "rb") as f:
                     file_name = os.path.basename(image_file)
                     file_content = ContentFile(f.read())
+
+                    file_storage = MediaCloudinaryStorage()
                     file_path = file_storage.save(f"listings/{file_name}", file_content)
                     listing = Listing(
                         auctioneer=auctioneer,
