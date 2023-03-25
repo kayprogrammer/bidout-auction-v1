@@ -5,7 +5,8 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from apps.common.models import TimeStampedUUIDModel
-from . managers import CustomUserManager
+from .managers import CustomUserManager
+
 
 class Timezone(TimeStampedUUIDModel):
     name = models.CharField(max_length=100, null=True)
@@ -13,11 +14,12 @@ class Timezone(TimeStampedUUIDModel):
     def __str__(self):
         return str(self.name)
 
+
 class PRIVACYCHOICES:
     last_seen = (
-        ('EVERYONE', 'EVERYONE'),
-        ('MY CONTACTS', 'MY CONTACTS'),
-        ('NOBODY', 'NOBODY')
+        ("EVERYONE", "EVERYONE"),
+        ("MY CONTACTS", "MY CONTACTS"),
+        ("NOBODY", "NOBODY"),
     )
 
     avatar_status = last_seen
@@ -25,25 +27,33 @@ class PRIVACYCHOICES:
     groups_status = last_seen
 
     message_timer = (
-        ('24 HOURS', '24 HOURS'),
-        ('7 DAYS', '7 DAYS'),
-        ('90 DAYS', '90 DAYS'),
-        ('OFF', 'OFF')
+        ("24 HOURS", "24 HOURS"),
+        ("7 DAYS", "7 DAYS"),
+        ("90 DAYS", "90 DAYS"),
+        ("OFF", "OFF"),
     )
 
+
 THEME_CHOICES = (
-    ('LIGHT', 'LIGHT'),
-    ('DARK', 'DARK'),
-    ('SYSTEM_DEFAULT', 'SYSTEM_DEFAULT')
+    ("LIGHT", "LIGHT"),
+    ("DARK", "DARK"),
+    ("SYSTEM_DEFAULT", "SYSTEM_DEFAULT"),
 )
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     pkid = models.BigAutoField(primary_key=True, editable=False)
     id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    first_name = models.CharField(verbose_name=(_("First name")), max_length=255, null=True)
-    last_name = models.CharField(verbose_name=(_("Last name")), max_length=255, null=True)
+    first_name = models.CharField(
+        verbose_name=(_("First name")), max_length=255, null=True
+    )
+    last_name = models.CharField(
+        verbose_name=(_("Last name")), max_length=255, null=True
+    )
     email = models.EmailField(verbose_name=(_("Email address")), unique=True)
-    tz = models.ForeignKey(Timezone, on_delete=models.SET_NULL, verbose_name=(_('Timezone')), null=True)
+    tz = models.ForeignKey(
+        Timezone, on_delete=models.SET_NULL, verbose_name=(_("Timezone")), null=True
+    )
     avatar = models.ImageField(upload_to="bidout-auction-v1/avatars/", null=True)
 
     terms_agreement = models.BooleanField(default=False)
@@ -66,7 +76,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         try:
             url = self.avatar.url
         except:
-            url = 'https://res.cloudinary.com/kay-development/image/upload/v1667610903/whatsappclonev1/default/Avatar-10_mvq1cm.jpg'
+            url = "https://res.cloudinary.com/kay-development/image/upload/v1667610903/whatsappclonev1/default/Avatar-10_mvq1cm.jpg"
         return url
 
     def __str__(self):

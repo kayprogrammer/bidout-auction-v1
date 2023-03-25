@@ -16,53 +16,84 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='SiteDetail',
+            name="SiteDetail",
             fields=[
-                ('pkid', models.BigAutoField(editable=False, primary_key=True, serialize=False)),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('name', models.CharField(max_length=300, null=True)),
-                ('email', models.EmailField(max_length=254, null=True)),
-                ('phone', models.CharField(max_length=300, null=True)),
-                ('address', models.CharField(max_length=300, null=True)),
-                ('fb', models.CharField(max_length=300, null=True)),
-                ('tw', models.CharField(max_length=300, null=True)),
-                ('wh', models.CharField(max_length=300, null=True)),
-                ('ig', models.CharField(max_length=300, null=True)),
+                (
+                    "pkid",
+                    models.BigAutoField(
+                        editable=False, primary_key=True, serialize=False
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("name", models.CharField(max_length=300, null=True)),
+                ("email", models.EmailField(max_length=254, null=True)),
+                ("phone", models.CharField(max_length=300, null=True)),
+                ("address", models.CharField(max_length=300, null=True)),
+                ("fb", models.CharField(max_length=300, null=True)),
+                ("tw", models.CharField(max_length=300, null=True)),
+                ("wh", models.CharField(max_length=300, null=True)),
+                ("ig", models.CharField(max_length=300, null=True)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Suscriber',
+            name="Suscriber",
             fields=[
-                ('pkid', models.BigAutoField(editable=False, primary_key=True, serialize=False)),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('email', models.EmailField(max_length=254, null=True)),
-                ('exported', models.BooleanField(default=False)),
+                (
+                    "pkid",
+                    models.BigAutoField(
+                        editable=False, primary_key=True, serialize=False
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("email", models.EmailField(max_length=254, null=True)),
+                ("exported", models.BooleanField(default=False)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Reviews',
+            name="Reviews",
             fields=[
-                ('pkid', models.BigAutoField(editable=False, primary_key=True, serialize=False)),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('name', models.CharField(max_length=300, null=True)),
-                ('show', models.BooleanField(default=False)),
-                ('text', models.TextField()),
-                ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "pkid",
+                    models.BigAutoField(
+                        editable=False, primary_key=True, serialize=False
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("name", models.CharField(max_length=300, null=True)),
+                ("show", models.BooleanField(default=False)),
+                ("text", models.TextField()),
+                (
+                    "user",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

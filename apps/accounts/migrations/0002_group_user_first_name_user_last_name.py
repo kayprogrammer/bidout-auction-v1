@@ -7,35 +7,36 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('auth', '0012_alter_user_first_name_max_length'),
-        ('accounts', '0001_initial'),
+        ("auth", "0012_alter_user_first_name_max_length"),
+        ("accounts", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Group',
-            fields=[
-            ],
+            name="Group",
+            fields=[],
             options={
-                'verbose_name': 'group',
-                'verbose_name_plural': 'groups',
-                'proxy': True,
-                'indexes': [],
-                'constraints': [],
+                "verbose_name": "group",
+                "verbose_name_plural": "groups",
+                "proxy": True,
+                "indexes": [],
+                "constraints": [],
             },
-            bases=('auth.group',),
+            bases=("auth.group",),
             managers=[
-                ('objects', django.contrib.auth.models.GroupManager()),
+                ("objects", django.contrib.auth.models.GroupManager()),
             ],
         ),
         migrations.AddField(
-            model_name='user',
-            name='first_name',
-            field=models.CharField(max_length=255, null=True, verbose_name='First name'),
+            model_name="user",
+            name="first_name",
+            field=models.CharField(
+                max_length=255, null=True, verbose_name="First name"
+            ),
         ),
         migrations.AddField(
-            model_name='user',
-            name='last_name',
-            field=models.CharField(max_length=255, null=True, verbose_name='Last name'),
+            model_name="user",
+            name="last_name",
+            field=models.CharField(max_length=255, null=True, verbose_name="Last name"),
         ),
     ]
