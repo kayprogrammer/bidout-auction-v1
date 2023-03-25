@@ -1,6 +1,6 @@
 {% extends "index.html" %}
 {% load static %}
-
+{% load humanize %}
 {% block content %}
     <!-- Header Section -->
     <div class="container-fluid pt-5">
@@ -45,186 +45,35 @@
         </div>
 
         <div class="row mx-md-5 mb-5 p-3">
-        <!-- i think if you are gonna have multiple items, continous html blocks would be unhealthy, so you can use whater=ver function you have under your sleeves to replicate one column from  -->
-        <!-- Here ...Start -->
-        <div class="col-12 col-md-6 col-lg-4 p-3 auction-card  text-center">
-            <div class=" p-3 auction border border-outline-1">
-            <div class="auction-photo">
-                <img src="{% static 'media/live-auc1.png' %}" alt="auction-1" class="img-fluid">
-                <p class="fw-bold auction-time text-danger bg-white m-0 p-3 mx-auto">-124D :23H : 02M : 53S</p>
-            </div>
-            <div class="auction-details">
-                <h3 class="text-start fs-4">Brand New royal Enfield 250 CC For special Sale</h3>
+            {% for listing in listings %}
+                <div class="col-12 col-md-6 col-lg-4 p-3 auction-card  text-center">
+                    <div class=" p-3 auction border border-outline-1">
+                    <div class="auction-photo">
+                        <img src="{{ listing.imageURL }}" alt="auction-1" class="img-fluid">
+                        <p class="fw-bold auction-time text-danger bg-white m-0 p-3 mx-auto">-124D :23H : 02M : 53S</p>
+                    </div>
+                    <div class="auction-details">
+                        <h3 class="text-start fs-4">{{ listing.title }}</h3>
 
-                <div class="auctioner my-3 d-flex justify-content-between">
-                <div class="user d-flex align-items-center">
-                    <img src="{% static 'media/auction-authr1.png' %}" alt="auction author" class="img-fluid me-3">
-                    <p class="">By Sara Alexa</p>
-                </div>
+                        <div class="auctioner my-3 d-flex justify-content-between">
+                        <div class="user d-flex align-items-center">
+                            <img src="{{ listing.auctioneer.avatarURL }}" alt="auction author" class="img-fluid me-3">
+                            <p class="">By {{ listing.auctioneer.full_name }}</p>
+                        </div>
 
-                <h4 class="text-danger">$6,000</h4>
+                        <h4 class="text-danger">${{ listing.price|intcomma }}</h4>
+                        </div>
+                        <div class="auction-action d-flex align-items-center justify-content-between">
+                        <button class="btn btn-md btn-danger">Place a Bid</button>
+                        <div class="action-btns d-flex justify-content-between">
+                            <i class="fa fa-2x text-secondary fa-solid fa-heart me-3"></i>
+                            <i class="fa fa-2x  fa-solid fa-ellipsis-v"></i>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
                 </div>
-                <div class="auction-action d-flex align-items-center justify-content-between">
-                
-                <button class="btn btn-md btn-danger">Place a Bid</button>
-
-                <div class="action-btns d-flex justify-content-between">
-                    <i class="fa fa-2x text-secondary fa-solid fa-heart me-3"></i>
-                    <i class="fa fa-2x  fa-solid fa-ellipsis-v"></i>
-                </div>
-                </div>
-            </div>
-            </div>
-        </div>
-        <!-- To Here ...Stop... then you can delete these from below... be sure to collapse the blocks to have a better view -->
-        
-        <div class="col-12 col-md-6 col-lg-4 p-3 auction-card  text-center">
-            <div class=" p-3 auction border border-outline-1">
-            <div class="auction-photo">
-                <img src="{% static 'media/live-auc2.png' %}" alt="auction-2" class="img-fluid">
-                <p class="fw-bold auction-time text-danger bg-white m-0 p-3 mx-auto">-124D :23H : 02M : 53S</p>
-            </div>
-            <div class="auction-details">
-                <h3 class="text-start fs-4">Wedding wow Exclusive Cupple Ring (S2022)</h3>
-
-                <div class="auctioner my-3 d-flex justify-content-between">
-                <div class="user d-flex align-items-center">
-                    <img src="{% static 'media/auction-authr1.png' %}" alt="auction author" class="img-fluid me-3">
-                    <p class="">By Sara Alexa</p>
-                </div>
-
-                <h4 class="text-danger">$6,000</h4>
-                </div>
-                <div class="auction-action d-flex align-items-center justify-content-between">
-                
-                <button class="btn btn-md btn-danger">Place a Bid</button>
-
-                <div class="action-btns d-flex justify-content-between">
-                    <i class="fa fa-2x text-secondary fa-solid fa-heart me-3"></i>
-                    <i class="fa fa-2x  fa-solid fa-ellipsis-v"></i>
-                </div>
-                </div>
-            </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-6 col-lg-4 p-3 auction-card  text-center">
-            <div class=" p-3 auction border border-outline-1">
-            <div class="auction-photo">
-                <img src="{% static 'media/live-auc3.png' %}" alt="auction-3" class="img-fluid">
-                <p class="fw-bold auction-time text-danger bg-white m-0 p-3 mx-auto">-124D :23H : 02M : 53S</p>
-            </div>
-            <div class="auction-details">
-                <h3 class="text-start fs-4">Toyota AIGID A Class Hatchback Sale</h3>
-
-                <div class="auctioner my-3 d-flex justify-content-between">
-                <div class="user d-flex align-items-center">
-                    <img src="{% static 'media/auction-authr1.png' %}" alt="auction author" class="img-fluid me-3">
-                    <p class="">By Sara Alexa</p>
-                </div>
-
-                <h4 class="text-danger">$6,000</h4>
-                </div>
-                <div class="auction-action d-flex align-items-center justify-content-between">
-                
-                <button class="btn btn-md btn-danger">Place a Bid</button>
-
-                <div class="action-btns d-flex justify-content-between">
-                    <i class="fa fa-2x text-secondary fa-solid fa-heart me-3"></i>
-                    <i class="fa fa-2x  fa-solid fa-ellipsis-v"></i>
-                </div>
-                </div>
-            </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-6 col-lg-4 p-3 auction-card  text-center">
-            <div class=" p-3 auction border border-outline-1">
-            <div class="auction-photo">
-                <img src="{% static 'media/live-auc4.png' %}" alt="auction-4" class="img-fluid">
-                <p class="fw-bold auction-time text-danger bg-white m-0 p-3 mx-auto">-124D :23H : 02M : 53S</p>
-            </div>
-            <div class="auction-details">
-                <h3 class="text-start fs-4">Havit HV-G61 USB Black Double Game With Vibrat</h3>
-
-                <div class="auctioner my-3 d-flex justify-content-between">
-                <div class="user d-flex align-items-center">
-                    <img src="{% static 'media/auction-authr1.png' %}" alt="auction author" class="img-fluid me-3">
-                    <p class="">By Sara Alexa</p>
-                </div>
-
-                <h4 class="text-danger">$6,000</h4>
-                </div>
-                <div class="auction-action d-flex align-items-center justify-content-between">
-                
-                <button class="btn btn-md btn-danger">Place a Bid</button>
-
-                <div class="action-btns d-flex justify-content-between">
-                    <i class="fa fa-2x text-secondary fa-solid fa-heart me-3"></i>
-                    <i class="fa fa-2x  fa-solid fa-ellipsis-v"></i>
-                </div>
-                </div>
-            </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-6 col-lg-4 p-3 auction-card  text-center">
-            <div class=" p-3 auction border border-outline-1">
-            <div class="auction-photo">
-                <img src="{% static 'media/live-auc5.png' %}" alt="auction-5" class="img-fluid">
-                <p class="fw-bold auction-time text-danger bg-white m-0 p-3 mx-auto">-124D :23H : 02M : 53S</p>
-            </div>
-            <div class="auction-details">
-                <h3 class="text-start fs-4">Brand New Honda CBR 600 RR For Sale (2022)</h3>
-
-                <div class="auctioner my-3 d-flex justify-content-between">
-                <div class="user d-flex align-items-center">
-                    <img src="{% static 'media/auction-authr1.png' %}" alt="auction author" class="img-fluid me-3">
-                    <p class="">By Sara Alexa</p>
-                </div>
-
-                <h4 class="text-danger">$6,000</h4>
-                </div>
-                <div class="auction-action d-flex align-items-center justify-content-between">
-                
-                <button class="btn btn-md btn-danger">Place a Bid</button>
-
-                <div class="action-btns d-flex justify-content-between">
-                    <i class="fa fa-2x text-secondary fa-solid fa-heart me-3"></i>
-                    <i class="fa fa-2x  fa-solid fa-ellipsis-v"></i>
-                </div>
-                </div>
-            </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-6 col-lg-4 p-3 auction-card  text-center">
-            <div class=" p-3 auction border border-outline-1">
-            <div class="auction-photo">
-                <img src="{% static 'media/live-auc6.png' %}" alt="auction-6" class="img-fluid">
-                <p class="fw-bold auction-time text-danger bg-white m-0 p-3 mx-auto">-124D :23H : 02M : 53S</p>
-            </div>
-            <div class="auction-details">
-                <h3 class="text-start fs-4">IPhone 11 Pro Max All Variants Available For Sale</h3>
-
-                <div class="auctioner my-3 d-flex justify-content-between">
-                <div class="user d-flex align-items-center">
-                    <img src="{% static 'media/auction-authr1.png' %}" alt="auction author" class="img-fluid me-3">
-                    <p class="">By Sara Alexa</p>
-                </div>
-
-                <h4 class="text-danger">$6,000</h4>
-                </div>
-                <div class="auction-action d-flex align-items-center justify-content-between">
-                
-                <button class="btn btn-md btn-danger">Place a Bid</button>
-
-                <div class="action-btns d-flex justify-content-between">
-                    <i class="fa fa-2x text-secondary fa-solid fa-heart me-3"></i>
-                    <i class="fa fa-2x  fa-solid fa-ellipsis-v"></i>
-                </div>
-                </div>
-            </div>
-            </div>
-        </div>
-        <!-- delete to here -->
-
+            {% endfor %}
         </div>
     </div>
 
@@ -243,55 +92,22 @@
 
 
         <div class="row mx-md-5 px-3">
-
-        <div class="col-12 col-md-6 col-lg-4 p-2">
-            <div class="testimonial p-3">
-            <div class="img-group d-flex justify-content-between">
-                <div class="test-desc d-grid">
-                <img src="{% static 'media/testi1.png' %}" alt="testi1" class="testimonial-img img-fluid mb-3">
-                <h5 class="mb-0">Johan Martin R</h5>
-                <p><small>CEO Founder</small></p>
+            {% for review in reviews %}
+                <div class="col-12 col-md-6 col-lg-4 p-2">
+                    <div class="testimonial p-3">
+                    <div class="img-group d-flex justify-content-between">
+                        <div class="test-desc d-grid">
+                        <img src="{{ review.user.avatarURL }}" alt="testi1" class="testimonial-img img-fluid mb-3">
+                        <h5 class="mb-0">{{ review.user.full_name }}</h5>
+                        </div>
+                        <img src="{% static 'media/lg_icons/quote-red.svg' %}" alt="quote" class="img-fluid align-self-start">
+                    </div>
+                    <div class="testimonial-text">
+                        <p><em>{{ review.text }}</em></p>
+                    </div>
+                    </div>
                 </div>
-                <img src="{% static 'media/lg_icons/quote-red.svg' %}" alt="quote" class="img-fluid align-self-start">
-            </div>
-            <div class="testimonial-text">
-                <p><em>Maecenas vitae porttitor neque, ac porttitor nunc. Duis venenatis lacinia libero. Nam nec augue ut nunc vulputate tincidunt at suscipit nunc.</em></p>
-            </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg-4 p-2">
-            <div class="testimonial p-3">
-            <div class="img-group d-flex justify-content-between">
-                <div class="test-desc d-grid">
-                <img src="{% static 'media/testi1.png' %}" alt="testi1" class="testimonial-img img-fluid mb-3">
-                <h5 class="mb-0">Johan Martin R</h5>
-                <p><small>CEO Founder</small></p>
-                </div>
-                <img src="{% static 'media/lg_icons/quote-red.svg' %}" alt="quote" class="img-fluid align-self-start">
-            </div>
-            <div class="testimonial-text">
-                <p><em>Maecenas vitae porttitor neque, ac porttitor nunc. Duis venenatis lacinia libero. Nam nec augue ut nunc vulputate tincidunt at suscipit nunc.</em></p>
-            </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-6 col-lg-4 p-2">
-            <div class="testimonial p-3">
-            <div class="img-group d-flex justify-content-between">
-                <div class="test-desc d-grid">
-                <img src="{% static 'media/testi1.png' %}" alt="testi1" class="testimonial-img img-fluid mb-3">
-                <h5 class="mb-0">Johan Martin R</h5>
-                <p><small>CEO Founder</small></p>
-                </div>
-                <img src="{% static 'media/lg_icons/quote-red.svg' %}" alt="quote" class="img-fluid align-self-start">
-            </div>
-            <div class="testimonial-text">
-                <p><em>Maecenas vitae porttitor neque, ac porttitor nunc. Duis venenatis lacinia libero. Nam nec augue ut nunc vulputate tincidunt at suscipit nunc.</em></p>
-            </div>
-            </div>
-        </div>
-
-
+            {% endfor %}
         </div>
     </div>
 {% endblock %}

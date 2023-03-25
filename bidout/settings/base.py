@@ -37,6 +37,7 @@ DJANGO_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",
+    "django.contrib.humanize",
 ]
 
 SITE_ID = 1
@@ -51,7 +52,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "apps.accounts",
     "apps.common",
-    "apps.listings",
+    "apps.listings.apps.ListingsConfig",
     "apps.general.apps.GeneralConfig",
 ]
 
@@ -190,8 +191,16 @@ logging.config.dictConfig(
             "django.server": DEFAULT_LOGGING["handlers"]["django.server"],
         },
         "loggers": {
-            "": {"level": "INFO", "handlers": ["console", "file"], "propagate": False},
-            "apps": {"level": "INFO", "handlers": ["console"], "propagate": False},
+            "": {
+                "level": "INFO",
+                "handlers": ["console", "file"],
+                "propagate": False,
+            },
+            "apps": {
+                "level": "INFO",
+                "handlers": ["console"],
+                "propagate": False,
+            },
             "django.server": DEFAULT_LOGGING["loggers"]["django.server"],
         },
     }
@@ -224,7 +233,11 @@ JAZZMIN_SETTINGS = {
     # Links to put along the top menu
     "topmenu_links": [
         # Url that gets reversed (Permissions can be added)
-        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {
+            "name": "Home",
+            "url": "admin:index",
+            "permissions": ["auth.view_user"],
+        },
         # model admin to link to (Permissions checked against model)
         # {"model": "accounts.User"},
         # App with dropdown menu to all its models pages (Permissions checked against models)
@@ -262,6 +275,9 @@ JAZZMIN_SETTINGS = {
         "general.sitedetail": "fas fa-info-circle",
         "general.suscriber": "fas fa-users",
         "general.review": "fas fa-thumbs-up",
+        "listings.listing": "fas fa-list",
+        "listings.bid": "fas fa-dollar-sign",
+        "listings.watchlist": "fas fa-heart",
         "sites.site": "fas fa-globe",
     },
     # Icons that are used when one is not manually specified

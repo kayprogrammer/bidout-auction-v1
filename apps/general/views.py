@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin
+from apps.listings.models import Listing
+from .models import Review
 
 
-class HomeView(LoginRequiredMixin, View):
+class HomeView(View):
     def get(self, request, *args, **kwargs):
-
-        context = {}
+        listings = Listing.objects.select_related("auctioneer")[:6]
+        reviews = Review.objects.filter(show=True)[:3]
+        context = {"listings": listings, "reviews": reviews}
         return render(request, "general/main.html", context)

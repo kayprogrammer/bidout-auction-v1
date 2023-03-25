@@ -50,8 +50,8 @@ class SuscriberAdmin(ExportActionMixin, admin.ModelAdmin):
 
 
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ["user", "name", "show"]
-    list_filter = ["user", "name", "show"]
+    list_display = ["user", "show"]
+    list_filter = ["user", "show"]
 
 
 admin.site.register(SiteDetail, SiteDetailAdmin)

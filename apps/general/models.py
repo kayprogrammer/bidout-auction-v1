@@ -50,7 +50,6 @@ class Suscriber(TimeStampedUUIDModel):
 
 class Review(TimeStampedUUIDModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    name = models.CharField(max_length=300, null=True)
     show = models.BooleanField(default=False)
     text = models.TextField(max_length=100)
 

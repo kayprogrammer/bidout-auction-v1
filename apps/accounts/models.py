@@ -72,6 +72,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = _("Users")
 
     @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
+    @property
     def avatarURL(self):
         try:
             url = self.avatar.url
