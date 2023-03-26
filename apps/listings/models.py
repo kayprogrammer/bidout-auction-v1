@@ -1,6 +1,7 @@
 from django.db import models
 from apps.common.models import TimeStampedUUIDModel
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -27,15 +28,21 @@ class Listing(TimeStampedUUIDModel):
 
     @property
     def time_left(self):
-        remaining_time = self.my_datetime_field - datetime.now()
+        remaining_time = self.closing_date - timezone.now()
         remaining_seconds = remaining_time.total_seconds()
         if remaining_seconds < 0:
-            return "Expired"
+            return "Closed!!!"
         else:
             days, seconds = divmod(int(remaining_seconds), 86400)
             hours, seconds = divmod(seconds, 3600)
             minutes, seconds = divmod(seconds, 60)
-            return f"{days}D :{hours:02d}H :{minutes:02d}M :{seconds:02d}S"
+            return f"-{days:02d}D :{hours:02d}H :{minutes:02d}M :{seconds:02d}S"
+
+    @property
+    def time_left_seconds(self):
+        remaining_time = self.closing_date - timezone.now()
+        remaining_seconds = remaining_time.total_seconds()
+        return remaining_seconds
 
     class Meta:
         ordering = ["-created_at"]

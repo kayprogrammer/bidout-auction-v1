@@ -12,7 +12,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("apps.accounts.urls")),
     path("", include("apps.general.urls")),
-    path("listings/", include("apps.listings.urls")),
+    path("", include("apps.listings.urls")),
     path("__debug__/", include(debug_toolbar.urls)),
 ]
 

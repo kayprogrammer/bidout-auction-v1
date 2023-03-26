@@ -1,0 +1,74 @@
+{% load static %}
+<div class="container-fluid footer bg-black text-white px-md-5">
+    <div class="row mx-md-5 pt-5">
+      <div class="col-12 col-md-6 col-lg-3 pt-5">
+        
+        <div class="access">
+          <h4 class="mb-3">Join Newsletter</h4>
+          <p class="mb-4">Subscribe our newsletter to get more free design course and resource.</p>
+          <input type="text" name="subscribe" class="form-control" placeholder="your email">
+          <button class="btn btn-danger btn-md mt-3" type="submit">Submit</button>
+
+          <div class="socials mt-4">
+            <a class="me-4" href="{{ site.tw }}"><i class="fa fs-4 fa-solid fa-twitter"></i></a>
+            <a class="me-4" href="{{ site.fb }}"><i class="fa fs-4 fa-solid fa-facebook"></i></a>
+            <a class="me-4" href="{{ site.wh }}"><i class="fa fs-4 fa-solid fa-whatsapp"></i></a>
+            <a class="me-4" href="{{ site.ig }}"><i class="fa fs-4 fa-solid fa-instagram"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3 pt-5">
+
+        <div class="links">
+          <h4 class="mb-4">Important Links</h4>
+
+          <div class="important-links d-grid gap-3">
+            <a href="{% url 'listings' %}">All Products</a>
+            <a href="">How It Works</a>
+            <a href="">My Account</a>
+            <a href="">About Company</a>
+            <a href="">Our News Feed</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3 pt-5">
+
+        <div class="help">
+          <h4 class="mb-4">Help & FAQs</h4>
+
+          <div class="help-links d-grid gap-3">
+            <a href="">Help Center</a>
+            <a href="">Customer FAQs</a>
+            <a href="">Terms and Conditions</a>
+            <a href="">Security Information</a>
+            <a href="">Mercahnt Add Policy</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3 pt-5">
+
+        <div class="about">
+          <img src="{% static 'media/footer-logo2.png' %}" alt="logo" class="img-fluid mb-3">
+
+          <p>{{ site.address }}</p>
+          <p>Phone: {{ site.phone }}</p>
+          <p>Email: {{ site.email }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="row border-top mt-5">
+      <div class="col-12 d-grid d-md-flex justify-content-between align-items-center pt-3 px-3">
+        <p>Copyright: {{ site.name }} &copy;{% now 'Y' %}</p>
+        <p>We accept:
+          <span class="d-flex justify-content-between">
+
+            <img src="{% static 'media/footer-pay1.png' %}" alt="VISA" class="img-fluid mx-2">
+            <img src="{% static 'media/footer-pay2.png' %}" alt="BLU" class="img-fluid mx-2">
+            <img src="{% static 'media/footer-pay3.png' %}" alt="VENMO" class="img-fluid mx-2">
+            <img src="{% static 'media/footer-pay4.png' %}" alt="PayPal" class="img-fluid mx-2">
+            <img src="{% static 'media/footer-pay5.png' %}" alt="MasterCard" class="img-fluid mx-2">
+          </span>
+        </p>
+      </div>
+    </div>
+  </div>

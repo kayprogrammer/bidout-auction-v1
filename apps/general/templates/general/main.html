@@ -49,14 +49,14 @@
 
     <div class="row mx-md-5 mb-5 p-3">
         {% for listing in listings %}
-        <div class="col-12 col-md-6 col-lg-4 p-3 auction-card  text-center">
+        <div class="col-12 col-md-6 col-lg-4 p-3 auction-card  text-center listing-object" data-remaining-time="{{ listing.time_left_seconds }}">
             <div class=" p-3 auction border border-outline-1">
                 <div class="auction-photo">
                     <img src="{{ listing.imageURL }}" alt="auction-1" class="img-fluid">
-                    <p class="fw-bold auction-time text-danger bg-white m-0 p-3 mx-auto">-124D :23H : 02M : 53S</p>
+                    <p class="fw-bold auction-time text-danger bg-white m-0 p-3 mx-auto remaining-time">{{ listing.time_left }}</p>
                 </div>
                 <div class="auction-details">
-                    <h3 class="text-start fs-4">{{ listing.title }}</h3>
+                    <h3 class="text-start fs-4">{{ listing.name }}</h3>
 
                     <div class="auctioner my-3 d-flex justify-content-between">
                         <div class="user d-flex align-items-center">
@@ -68,10 +68,9 @@
                         <h4 class="text-danger">${{ listing.price|intcomma }}</h4>
                     </div>
                     <div class="auction-action d-flex align-items-center justify-content-between">
-                        <button class="btn btn-md btn-danger">Place a Bid</button>
+                        <button class="btn btn-md btn-danger bid-btn" {% if listing.time_left_seconds < 1 %}disabled{% endif %}>Place a Bid</button>
                         <div class="action-btns d-flex justify-content-between">
                             <i class="fa fa-2x text-secondary fa-solid fa-heart me-3"></i>
-                            <i class="fa fa-2x  fa-solid fa-ellipsis-v"></i>
                         </div>
                     </div>
                 </div>
