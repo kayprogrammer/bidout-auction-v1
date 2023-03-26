@@ -18,11 +18,10 @@ User = get_user_model()
 PARENT_DIR = Path(__file__).resolve().parent
 test_images_directory = os.path.join(PARENT_DIR, "test_data/images")
 
+
 @receiver(custom_signal3)
 def create_test_categories(sender, **kwargs):
-    categories = Category.objects.all().values_list(
-        "name", flat=True
-    )
+    categories = Category.objects.all().values_list("name", flat=True)
     new_categories = []
     count = 0
     for category in test_categories:
@@ -34,10 +33,7 @@ def create_test_categories(sender, **kwargs):
                 print("###############################")
                 print("  ---------------------------  ")
 
-
-            new_category = Category(
-                name=category
-            )
+            new_category = Category(name=category)
             new_categories.append(new_category)
 
     Category.objects.bulk_create(new_categories)
@@ -46,6 +42,7 @@ def create_test_categories(sender, **kwargs):
         print("#-INITIAL-CATEGORIES-CREATED-#")
         print("##############################\n")
     custom_signal4.send(sender=sender)
+
 
 @receiver(custom_signal4)
 def create_initial_listings(sender, **kwargs):

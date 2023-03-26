@@ -19,5 +19,3 @@ class SuscriberView(View):
         Suscriber.objects.get_or_create(email=email)
         messages.success(request, "Suscribed successfully")
         return redirect(request.META.get("HTTP_REFERER"))
-
-

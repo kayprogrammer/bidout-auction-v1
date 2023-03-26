@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from apps.common.models import TimeStampedUUIDModel
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -14,6 +15,9 @@ class Category(TimeStampedUUIDModel):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('category-listings', kwargs={'category_slug': self.slug})
+        
     class Meta:
         verbose_name_plural = "Categories"
 

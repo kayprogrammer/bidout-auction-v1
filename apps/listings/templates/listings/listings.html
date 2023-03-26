@@ -6,7 +6,7 @@
     <div class="container-fluid bg-danger py-5 text-white">
         <div class="row pt-5">
             <div class="col-12 col-lg-10 d-grid gap-3 d-md-flex justify-content-between align-items-center">
-                <h1 class="display-5 fw-bold ms-0 ps-0 ms-md-5 ps-md-5 pt-3">Active Listings</h1>
+                <h1 class="display-5 fw-bold ms-0 ps-0 ms-md-5 ps-md-5 pt-3">{% if category %}{{ category.name }}{% else %}Active Listings{% endif %}</h1>
 
                 <div class="">
                   <button class="btn btn-primary px-3 py-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">Categories</button>
@@ -23,9 +23,9 @@
 
                     <!-- on click of any child item, it would filter based on context -->
                     <div class="d-grid gap-1 text-center text-white categories">
-                      <a class="my-2 mx-3 py-3 bg-secondary" data-bs-dismiss="offcanvas" aria-label="Close" href="{% url 'listings' %}"><h5>All</h5></a>
+                      <a class="my-2 mx-3 py-3 bg-secondary" href="{% url 'listings' %}"><h5>All</h5></a>
                       {% for category in categories %}
-                        <a class="my-2 mx-3 py-3 bg-secondary" data-bs-dismiss="offcanvas" aria-label="Close" href="{{ category.get_absolute_url }}"><h5>{{ category.name }}</h5></a>
+                        <a class="my-2 mx-3 py-3 bg-secondary" href="{{ category.get_absolute_url }}"><h5>{{ category.name }}</h5></a>
                       {% endfor %}
                     </div>
                     
@@ -69,6 +69,14 @@
             </div>
         </div>
         </a>
+        {% empty %}
+          <p style="color: blue; font-weight: bold; font-size: 30px;">
+            {% if category %}
+              No active listings in this category yet!
+            {% else %}
+              No active listings here yet!
+            {% endif %}
+          </p>
         {% endfor %}
       </div>
     </div>

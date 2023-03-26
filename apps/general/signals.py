@@ -22,7 +22,7 @@ def create_site_detail(sender, **kwargs):
         site_detail = SiteDetail.objects.create()
         print("########################")
         print("#-SITE-DETAILS-CREATED-#")
-        print("########################\n")        
+        print("########################\n")
     custom_signal1.send(sender=sender)
 
 
