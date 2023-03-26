@@ -49,7 +49,7 @@
 
     <div class="row mx-md-5 mb-5 p-3">
         {% for listing in listings %}
-        <div class="col-12 col-md-6 col-lg-4 p-3 auction-card  text-center listing-object" data-remaining-time="{{ listing.time_left_seconds }}">
+        <div class="col-12 col-md-6 col-lg-4 p-3 auction-card text-center listing-object" data-remaining-time="{{ listing.time_left_seconds }}">
             <div class=" p-3 auction border border-outline-1">
                 <div class="auction-photo">
                     <img src="{{ listing.imageURL }}" alt="auction-1" class="img-fluid">

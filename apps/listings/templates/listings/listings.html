@@ -1,0 +1,75 @@
+{% extends "index.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+    <!-- Header Section -->
+    <div class="container-fluid bg-danger py-5 text-white">
+        <div class="row pt-5">
+            <div class="col-12 col-lg-10 d-grid gap-3 d-md-flex justify-content-between align-items-center">
+                <h1 class="display-5 fw-bold ms-0 ps-0 ms-md-5 ps-md-5 pt-3">Active Listings</h1>
+
+                <div class="">
+                  <button class="btn btn-primary px-3 py-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">Categories</button>
+                </div>
+
+
+                <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+                  <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Backdrop </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                  </div>
+                  <div class="offcanvas-body text-secondary">
+                    <h2 class="mb-3">Categories</h2>
+
+                    <!-- on click of any child item, it would filter based on context -->
+                    <div class="d-grid gap-1 text-center text-white categories">
+                      <a class="my-2 mx-3 py-3 bg-secondary" data-bs-dismiss="offcanvas" aria-label="Close" href="{% url 'listings' %}"><h5>All</h5></a>
+                      {% for category in categories %}
+                        <a class="my-2 mx-3 py-3 bg-secondary" data-bs-dismiss="offcanvas" aria-label="Close" href="{{ category.get_absolute_url }}"><h5>{{ category.name }}</h5></a>
+                      {% endfor %}
+                    </div>
+                    
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Auction -->
+    <div class="container-fluid">
+
+      <div class="row mx-md-5 mb-5 p-3">
+        {% for listing in listings %}
+        <a href="./auction-detail.html" class="col-12 col-md-6 col-lg-4 p-3 auction-card text-center listing-object" data-remaining-time="{{ listing.time_left_seconds }}">
+          <div>
+            <div class=" p-3 auction border border-outline-1">
+                <div class="auction-photo">
+                    <img src="{{ listing.imageURL }}" alt="auction-1" class="img-fluid">
+                    <p class="fw-bold auction-time text-danger bg-white m-0 p-3 mx-auto remaining-time">{{ listing.time_left }}</p>
+                </div>
+                <div class="auction-details">
+                    <h3 class="text-start fs-4">{{ listing.name }}</h3>
+
+                    <div class="auctioner my-3 d-flex justify-content-between">
+                        <div class="user d-flex align-items-center">
+                            <img style="max-width: 35px;" src="{{ listing.auctioneer.avatarURL }}"
+                                alt="auction author" class="img-fluid me-3 rounded-circle">
+                            <p class="">By {{ listing.auctioneer.full_name }}</p>
+                        </div>
+
+                        <h4 class="text-danger">${{ listing.price|intcomma }}</h4>
+                    </div>
+                    <div class="auction-action d-flex align-items-center justify-content-between">
+                        <button class="btn btn-md btn-danger bid-btn" {% if listing.time_left_seconds < 1 %}disabled{% endif %}>Place a Bid</button>
+                        <div class="action-btns d-flex justify-content-between">
+                            <i class="fa fa-2x text-secondary fa-solid fa-heart me-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+{% endblock %}

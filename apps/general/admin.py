@@ -44,8 +44,8 @@ class SuscriberResource(resources.ModelResource):
 
 
 class SuscriberAdmin(ExportActionMixin, admin.ModelAdmin):
-    list_display = ["email", "exported"]
-    list_filter = ["email", "exported"]
+    list_display = ["email", "exported", "created_at"]
+    list_filter = ["email", "exported", "created_at"]
     resource_class = SuscriberResource
 
 

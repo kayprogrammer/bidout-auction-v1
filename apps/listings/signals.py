@@ -1,43 +1,63 @@
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
+from django.utils.text import slugify
 from django.utils import timezone
-from .models import Listing
-from .test_data.listings import test_listings
+from .models import Listing, Category
+from .test_data.listings import test_listings, test_categories
 from datetime import timedelta
 import os
 from pathlib import Path
 from django.core.files.base import ContentFile
 from cloudinary_storage.storage import MediaCloudinaryStorage
+import random
+from apps.general.signals import custom_signal3, custom_signal4
 
 User = get_user_model()
 
 PARENT_DIR = Path(__file__).resolve().parent
 test_images_directory = os.path.join(PARENT_DIR, "test_data/images")
 
+@receiver(custom_signal3)
+def create_test_categories(sender, **kwargs):
+    categories = Category.objects.all().values_list(
+        "name", flat=True
+    )
+    new_categories = []
+    count = 0
+    for category in test_categories:
+        if not category in categories:
+            count += 1
+            if count == 1:
+                print("###############################")
+                print("#-CREATING-INITIAL-CATEGORIES-#")
+                print("###############################")
+                print("  ---------------------------  ")
 
-@receiver(post_migrate)
+
+            new_category = Category(
+                name=category
+            )
+            new_categories.append(new_category)
+
+    Category.objects.bulk_create(new_categories)
+    if len(new_categories) > 0:
+        print("##############################")
+        print("#-INITIAL-CATEGORIES-CREATED-#")
+        print("##############################\n")
+    custom_signal4.send(sender=sender)
+
+@receiver(custom_signal4)
 def create_initial_listings(sender, **kwargs):
     listings = Listing.objects.all()
     if not listings.exists():
-        print(
-            """
-            #############################
-            #-CREATING-INITIAL-LISTINGS-#
-            #############################
-            """
-        )
-        auctioneer = User.objects.filter(email="testauctioneer@email.com")
-        if not auctioneer.exists():
-            auctioneer = User.objects.create_user(
-                first_name="John",
-                last_name="Doe",
-                email="testauctioneer@email.com",
-                password="testauctioneer",
-            )
-        else:
-            auctioneer = auctioneer.get()
+        print("#############################")
+        print("#-CREATING-INITIAL-LISTINGS-#")
+        print("#############################")
+        print("  -------------------------  ")
 
+        auctioneer = User.objects.get(email="testauctioneer@email.com")
+        categories = Category.objects.all()
         listings = []
         for idx, image_file in enumerate(os.listdir(test_images_directory)):
             if image_file.endswith(".png"):
@@ -53,16 +73,13 @@ def create_initial_listings(sender, **kwargs):
                         name=test_listings[idx]["name"],
                         desc="Korem ipsum dolor amet, consectetur adipiscing elit. Maece nas in pulvinar neque. Nulla finibus lobortis pulvinar. Donec a consectetur nulla.",
                         price=test_listings[idx]["price"],
+                        category=random.choice(categories),
                         closing_date=timezone.now() + timedelta(days=7 + idx),
                         image=file_path,
                     )
                     listings.append(listing)
 
         Listing.objects.bulk_create(listings)
-        print(
-            """
-            ############################
-            #-INITIAL-LISTINGS-CREATED-#
-            ############################
-            """
-        )
+        print("############################")
+        print("#-INITIAL-LISTINGS-CREATED-#")
+        print("############################\n")
