@@ -1,6 +1,8 @@
 {% extends "index.html" %}
 {% load static %}
 {% load humanize %}
+{% load custom_filters %}
+
 {% block content %}
 <!-- Header Section -->
 <div class="container-fluid pt-5">
@@ -16,7 +18,7 @@
                 </small>
 
             </p>
-            <button class="btn btn-md btn-danger explore">Start Exploring</button>
+            <a href="{% url 'listings' %}" class="btn btn-md btn-danger explore">Start Exploring</a>
 
 
         </div>
@@ -70,7 +72,7 @@
                     <div class="auction-action d-flex align-items-center justify-content-between">
                         <button class="btn btn-md btn-danger bid-btn" {% if listing.time_left_seconds < 1 %}disabled{% endif %}>Place a Bid</button>
                         <div class="action-btns d-flex justify-content-between">
-                            <i class="fa fa-2x text-secondary fa-solid fa-heart me-3"></i>
+                            {{ listing|modify_watchlist_button:request }}
                         </div>
                     </div>
                 </div>

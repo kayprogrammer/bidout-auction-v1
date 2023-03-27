@@ -1,4 +1,5 @@
 from django.db.models.signals import post_migrate
+from django.contrib.auth.hashers import make_password
 from django.dispatch import Signal, receiver
 from django.contrib.auth import get_user_model
 from .models import SiteDetail, Review
@@ -51,7 +52,10 @@ def create_test_users(sender, **kwargs):
                 first_name="John",
                 last_name="Doe",
                 email=email,
-                password=email.split("@")[0],
+                password=make_password(email.split("@")[0]),
+                is_superuser = True if email == "testadmin@email.com" else False,
+                is_staff = True if email == "testadmin@email.com" else False,
+                is_email_verified = True
             )
             users.append(user)
 

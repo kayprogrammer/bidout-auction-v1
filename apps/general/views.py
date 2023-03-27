@@ -7,6 +7,7 @@ from .models import Review, Suscriber
 
 class HomeView(View):
     def get(self, request, *args, **kwargs):
+        print(request.session.session_key)
         listings = Listing.objects.select_related("auctioneer")[:6]
         reviews = Review.objects.filter(show=True)[:3]
         context = {"listings": listings, "reviews": reviews}

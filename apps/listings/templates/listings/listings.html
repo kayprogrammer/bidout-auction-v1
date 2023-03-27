@@ -1,6 +1,8 @@
 {% extends "index.html" %}
 {% load static %}
 {% load humanize %}
+{% load custom_filters %}
+
 {% block content %}
     <!-- Header Section -->
     <div class="container-fluid bg-danger py-5 text-white">
@@ -40,8 +42,7 @@
 
       <div class="row mx-md-5 mb-5 p-3">
         {% for listing in listings %}
-        <a href="./auction-detail.html" class="col-12 col-md-6 col-lg-4 p-3 auction-card text-center listing-object" data-remaining-time="{{ listing.time_left_seconds }}">
-          <div>
+        <div class="col-12 col-md-6 col-lg-4 p-3 auction-card text-center listing-object" data-remaining-time="{{ listing.time_left_seconds }}">
             <div class=" p-3 auction border border-outline-1">
                 <div class="auction-photo">
                     <img src="{{ listing.imageURL }}" alt="auction-1" class="img-fluid">
@@ -62,13 +63,12 @@
                     <div class="auction-action d-flex align-items-center justify-content-between">
                         <button class="btn btn-md btn-danger bid-btn" {% if listing.time_left_seconds < 1 %}disabled{% endif %}>Place a Bid</button>
                         <div class="action-btns d-flex justify-content-between">
-                            <i class="fa fa-2x text-secondary fa-solid fa-heart me-3"></i>
-                        </div>
+                          {{ listing|modify_watchlist_button:request }}
+                      </div>
                     </div>
                 </div>
             </div>
-        </div>
-        </a>
+          </div>
         {% empty %}
           <p style="color: blue; font-weight: bold; font-size: 30px;">
             {% if category %}

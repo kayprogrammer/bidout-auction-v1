@@ -21,6 +21,7 @@ from .forms import (
     CustomSetPasswordForm,
     CustomUserCreationForm,
 )
+from apps.listings.models import WatchList
 
 User = get_user_model()
 
@@ -122,8 +123,20 @@ class LoginView(LogoutRequiredMixin, View):
                 {"detail": "request", "email": user.email},
             )
 
+        # Move all existing watchlists as an unauthenticated user to logged in user
+        existing_watchlists = WatchList.objects.filter(session_key=request.user)
+        if existing_watchlists.exists():
+            watchlists = [
+                WatchList(user=user, listing_id=id)
+                for id in existing_watchlists.values_list('listing', flat=True)
+
+            ]
+            WatchList.objects.bulk_create(watchlists, ignore_conflicts=True)
+
+        existing_watchlists.delete()
+        
         login(request, user)
-        return redirect(reverse("dashboard"))
+        return redirect("/")
 
 
 class LogoutView(LoginRequiredMixin, View):

@@ -60,7 +60,7 @@
             </li>
             {% endif %}
             <li class="nav-item mx-2">
-              <a class="nav-link" href="./watchlist.html">Watch List</a>
+              <a class="nav-link" href="{% url 'watch-list' %}">Watch List</a>
             </li>
             <li class="nav-item mx-2">
               <a class="nav-link" href="./additem.html">Create Listing</a>
@@ -84,8 +84,12 @@
     <!-- Footer -->
     {% footer %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js" integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="{% static 'js/script.js' %}"></script>
     <script type="text/javascript">
+      $.ajaxSetup({
+        headers: {"X-CSRFToken": '{{csrf_token}}'}
+      })
       // Get all the elements with the class "remaining-time"
       var objectElements = document.querySelectorAll(".listing-object");
     
@@ -128,8 +132,39 @@
           }
         }, 1000); // Update the countdown every second (1000 milliseconds)
       });
+
+      $('.watchlist-btn').on('click', function(e) {
+        var btn = $(this)
+        var listing_slug = btn.attr('data-listing-slug')
+        var action = btn.attr('data-action')
+        var method = "POST"
+        if (action == "remove") {
+          method = "DELETE"
+        }
+        
+        $.ajax({
+          url: "{% url 'watch-list' %}",
+          method: method,
+          data: JSON.stringify({
+            "listing_slug": listing_slug
+          }),
+          dataType: "json",
+          success: function(response){
+            if (response?.success){
+              btn.toggleClass('text-secondary text-danger')
+              if (action == "remove") {
+                btn.attr('data-action', 'add')
+              } else {
+                btn.attr('data-action', 'remove')
+              }
+            }
+          }
+        })
+      })
     </script>
     {% block js %}
     {% endblock %}    
+
+
   </body>
 </html>

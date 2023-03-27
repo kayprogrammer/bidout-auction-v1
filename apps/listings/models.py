@@ -16,14 +16,18 @@ class Category(TimeStampedUUIDModel):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('category-listings', kwargs={'category_slug': self.slug})
-        
+        return reverse(
+            "category-listings", kwargs={"category_slug": self.slug}
+        )
+
     class Meta:
         verbose_name_plural = "Categories"
 
 
 class Listing(TimeStampedUUIDModel):
-    auctioneer = models.ForeignKey(User, on_delete=models.CASCADE)
+    auctioneer = models.ForeignKey(
+        User, on_delete=models.CASCADE
+    )
     name = models.CharField(max_length=70, null=True)
     slug = AutoSlugField(populate_from="name", unique=True, always_update=True)
     desc = models.TextField()
@@ -56,7 +60,9 @@ class Listing(TimeStampedUUIDModel):
             days, seconds = divmod(int(remaining_seconds), 86400)
             hours, seconds = divmod(seconds, 3600)
             minutes, seconds = divmod(seconds, 60)
-            return f"-{days:02d}D :{hours:02d}H :{minutes:02d}M :{seconds:02d}S"
+            return (
+                f"-{days:02d}D :{hours:02d}H :{minutes:02d}M :{seconds:02d}S"
+            )
 
     @property
     def time_left_seconds(self):
@@ -69,20 +75,40 @@ class Listing(TimeStampedUUIDModel):
 
 
 class Bid(TimeStampedUUIDModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE
+    )
+    listing = models.ForeignKey(
+        Listing, on_delete=models.CASCADE
+    )
     amount = models.DecimalField(max_digits=100, decimal_places=2, null=True)
 
     def __str__(self):
-        return f"{self.listing} - ${self.amount}"
+        return f"{self.listing.name} - ${self.amount}"
 
 
 class WatchList(TimeStampedUUIDModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=True
+    )
+    listing = models.ForeignKey(
+        Listing, on_delete=models.CASCADE
+    )
     session_key = models.CharField(max_length=1000, null=True)
 
     def __str__(self):
         if self.user:
-            return f"{self.listing} - {self.user}"
-        return f"{self.listing} - {self.session_key}"
+            return f"{self.listing.name} - {self.user.full_name}"
+        return f"{self.listing.name} - {self.session_key}"
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "listing"],
+                name="unique_user_listing_watchlist",
+            ),
+            models.UniqueConstraint(
+                fields=["session_key", "listing"],
+                name="unique_session_key_listing_watchlist",
+            ),
+        ]
