@@ -18,15 +18,14 @@
 
       <div class="row mx-md-5 mb-5 p-3">
         {% for listing in listings %}
-        <a href="./auction-detail.html" class="col-12 col-md-6 col-lg-4 p-3 auction-card text-center listing-object" data-remaining-time="{{ listing.listing.time_left_seconds }}">
-          <div>
+        <div class="col-12 col-md-6 col-lg-4 p-3 auction-card text-center listing-object" data-remaining-time="{{ listing.listing.time_left_seconds }}">
             <div class=" p-3 auction border border-outline-1">
-                <div class="auction-photo">
+                <div role="button" onclick="window.location=`{{ listing.listing.get_absolute_url }}`" class="auction-photo">
                     <img src="{{ listing.listing.imageURL }}" alt="auction-1" class="img-fluid">
                     <p class="fw-bold auction-time text-danger bg-white m-0 p-3 mx-auto remaining-time">{{ listing.listing.time_left }}</p>
                 </div>
                 <div class="auction-details">
-                    <h3 class="text-start fs-4">{{ listing.listing.name }}</h3>
+                    <h3 role="button" onclick="window.location=`{{ listing.get_absolute_url }}`" class="text-start fs-4">{{ listing.listing.name }}</h3>
 
                     <div class="auctioner my-3 d-flex justify-content-between">
                         <div class="user d-flex align-items-center">
@@ -45,8 +44,7 @@
                     </div>
                 </div>
             </div>
-        </div>
-        </a>
+          </div>
         {% empty %}
           <p style="color: blue; font-weight: bold; font-size: 30px;">
             You don't have any favourite active listings here yet!

@@ -42,6 +42,11 @@ class Listing(TimeStampedUUIDModel):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse(
+            "listing-detail", kwargs={"listing_slug": self.slug}
+        )
+
     @property
     def imageURL(self):
         try:

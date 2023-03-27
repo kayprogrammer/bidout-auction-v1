@@ -44,12 +44,12 @@
         {% for listing in listings %}
         <div class="col-12 col-md-6 col-lg-4 p-3 auction-card text-center listing-object" data-remaining-time="{{ listing.time_left_seconds }}">
             <div class=" p-3 auction border border-outline-1">
-                <div class="auction-photo">
+                <div role="button" onclick="window.location=`{{ listing.get_absolute_url }}`" class="auction-photo">
                     <img src="{{ listing.imageURL }}" alt="auction-1" class="img-fluid">
                     <p class="fw-bold auction-time text-danger bg-white m-0 p-3 mx-auto remaining-time">{{ listing.time_left }}</p>
                 </div>
                 <div class="auction-details">
-                    <h3 class="text-start fs-4">{{ listing.name }}</h3>
+                    <h3 role="button" onclick="window.location=`{{ listing.get_absolute_url }}`" class="text-start fs-4">{{ listing.name }}</h3>
 
                     <div class="auctioner my-3 d-flex justify-content-between">
                         <div class="user d-flex align-items-center">

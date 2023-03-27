@@ -3,7 +3,7 @@ from django.http import Http404, JsonResponse
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
-from .models import Listing, Category, WatchList
+from .models import Listing, Category, WatchList, Bid
 import json
 
 
@@ -29,7 +29,9 @@ class AuctionDetailView(View):
             .select_related("auctioneer")[:3]
         )
 
-        context = {"listing": listing, "related_listings": related_listings}
+        latest_bids = Bid.objects.filter(listing=listing).select_related('user', 'listing')[:3]
+
+        context = {"listing": listing, "related_listings": related_listings, "latest_bids": latest_bids}
         return render(request, "listings/listing-detail.html", context)
 
 
