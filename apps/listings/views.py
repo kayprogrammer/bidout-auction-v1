@@ -29,9 +29,15 @@ class AuctionDetailView(View):
             .select_related("auctioneer")[:3]
         )
 
-        latest_bids = Bid.objects.filter(listing=listing).select_related('user', 'listing')[:3]
+        latest_bids = Bid.objects.filter(listing=listing).select_related(
+            "user", "listing"
+        )[:3]
 
-        context = {"listing": listing, "related_listings": related_listings, "latest_bids": latest_bids}
+        context = {
+            "listing": listing,
+            "related_listings": related_listings,
+            "latest_bids": latest_bids,
+        }
         return render(request, "listings/listing-detail.html", context)
 
 

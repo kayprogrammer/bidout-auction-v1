@@ -53,9 +53,9 @@ def create_test_users(sender, **kwargs):
                 last_name="Doe",
                 email=email,
                 password=make_password(email.split("@")[0]),
-                is_superuser = True if email == "testadmin@email.com" else False,
-                is_staff = True if email == "testadmin@email.com" else False,
-                is_email_verified = True
+                is_superuser=True if email == "testadmin@email.com" else False,
+                is_staff=True if email == "testadmin@email.com" else False,
+                is_email_verified=True,
             )
             users.append(user)
 
