@@ -1,14 +1,16 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import Http404, JsonResponse
 from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin
+from apps.accounts.mixins import LoginRequiredMixin
 from django.db.models import Q
+from decimal import Decimal
+
 from .models import Listing, Category, WatchList, Bid
 import json
 
 
 class AllAuctionsView(View):
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         listings = Listing.objects.select_related("auctioneer")
         categories = Category.objects.all()
         context = {"listings": listings, "categories": categories}
@@ -60,10 +62,11 @@ class AuctionsByCategoryView(View):
 
 
 class WatchListView(View):
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         user = request.user
         listings = WatchList.objects.filter(
-            Q(user_id=user.pk, session_key=None) | Q(user=None, session_key=user)
+            Q(user_id=user.pk, session_key=None)
+            | Q(user=None, session_key=user)
         ).select_related("user", "listing")
         context = {"listings": listings}
         return render(request, "listings/watchlist.html", context)
@@ -79,19 +82,51 @@ class WatchListView(View):
 
         return JsonResponse({"success": True})
 
-    def delete(self, request, *args, **kwargs):
+    def delete(self, request):
         data = json.loads(request.body)
         user = request.user
         listing_slug = data.get("listing_slug")
         watch_list = WatchList.objects.filter(
-            Q(user_id=user.pk, session_key=None) | Q(user=None, session_key=user)
+            Q(user_id=user.pk, session_key=None)
+            | Q(user=None, session_key=user)
         ).filter(listing__slug=listing_slug)
         watch_list.delete()
         return JsonResponse({"success": True})
 
 
+class PlaceBidView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        listing = get_object_or_404(Listing, slug=kwargs.get("listing_slug"))
+        amount = request.POST.get("amount")
+        response = {"status": "error"}
+
+        if listing.auctioneer == user:
+            response["message"] = "You can't bid your product!"
+
+        if amount:
+            amount = Decimal(amount)
+            if amount < listing.price:
+                response[
+                    "message"
+                ] = "Bid amount cannot be less than the bidding price!"
+            elif amount <= listing.get_highest_bid:
+                response[
+                    "message"
+                ] = "Bid amount must be more than the highest bid!"
+            else:
+                bid = Bid.objects.create(
+                    user=request.user, listing=listing, amount=amount
+                )
+                response["status"] = "success"
+                amount = round(bid.amount, 2)
+                response["amount"] = f"{amount:,}"
+
+        return JsonResponse(response)
+
+
 class DashboardView(LoginRequiredMixin, View):
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
 
         context = {}
         return render(request, "listings/dashboard.html", context)

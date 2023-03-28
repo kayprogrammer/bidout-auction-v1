@@ -18,33 +18,65 @@
 
       <div class="row mx-md-5 mb-5 p-3">
         {% for listing in listings %}
-        <div class="col-12 col-md-6 col-lg-4 p-3 auction-card text-center listing-object" data-remaining-time="{{ listing.listing.time_left_seconds }}">
-            <div class=" p-3 auction border border-outline-1">
-                <div role="button" onclick="window.location=`{{ listing.listing.get_absolute_url }}`" class="auction-photo">
-                    <img src="{{ listing.listing.imageURL }}" alt="auction-1" class="img-fluid">
-                    <p class="fw-bold auction-time text-danger bg-white m-0 p-3 mx-auto remaining-time">{{ listing.listing.time_left }}</p>
-                </div>
-                <div class="auction-details">
-                    <h3 role="button" onclick="window.location=`{{ listing.get_absolute_url }}`" class="text-start fs-4">{{ listing.listing.name }}</h3>
-
-                    <div class="auctioner my-3 d-flex justify-content-between">
-                        <div class="user d-flex align-items-center">
-                            <img style="max-width: 35px;" src="{{ listing.listing.auctioneer.avatarURL }}"
-                                alt="auction author" class="img-fluid me-3 rounded-circle">
-                            <p class="">By {{ listing.listing.auctioneer.full_name }}</p>
-                        </div>
-
-                        <h4 class="text-danger">${{ listing.listing.price|intcomma }}</h4>
-                    </div>
-                    <div class="auction-action d-flex align-items-center justify-content-between">
-                        <button class="btn btn-md btn-danger bid-btn" {% if listing.listing.time_left_seconds < 1 %}disabled{% endif %}>Place a Bid</button>
-                        <div class="action-btns d-flex justify-content-between">
-                          {{ listing.listing|modify_watchlist_button:request }}
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- Bootstrap modal -->
+        <div class="modal fade" id="bid-modal-{{ listing.listing.slug }}" tabindex="-1" role="dialog" aria-labelledby="bidModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+              <form method="POST" action="{% url 'place-bid' listing.listing.slug %}" class="modal-content bid-form">
+                  {% csrf_token %}
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="bidModalLabel">Highest Bid: ${{ listing.listing.get_highest_bid|floatformat:2|intcomma }}</h5>
+                      <button type="button" class="close" style="outline: none; background-color: transparent; border: none;" data-bs-dismiss="modal" aria-label="Close">
+                          <span style="font-weight: bold; color: red;" aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">
+                      <input type="number" step=".01" placeholder="$0.00" name="amount" class="form-control" required/>
+                      <div class="error-container"></div>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="submit" class="btn btn-primary">Place bid</button>
+                  </div>
+              </form>
           </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-4 p-3 auction-card text-center listing-object" data-remaining-time="{{ listing.listing.time_left_seconds }}">
+          <div class=" p-3 auction border border-outline-1">
+              <div role="button" onclick="window.location=`{{ listing.listing.get_absolute_url }}`" class="auction-photo">
+                  <img src="{{ listing.listing.imageURL }}" alt="auction-1" class="img-fluid">
+                  <p class="fw-bold auction-time text-danger bg-white m-0 p-3 mx-auto remaining-time">{{ listing.listing.time_left }}</p>
+              </div>
+              <div class="auction-details">
+                  <h3 role="button" onclick="window.location=`{{ listing.listing.get_absolute_url }}`" class="text-start fs-4">{{ listing.listing.name }}</h3>
+
+                  <div class="auctioner my-3 d-flex justify-content-between">
+                      <div class="user d-flex align-items-center">
+                          <img style="max-width: 35px;" src="{{ listing.listing.auctioneer.avatarURL }}"
+                              alt="auction author" class="img-fluid me-3 rounded-circle">
+                          <p class="">By {{ listing.listing.auctioneer.full_name }}</p>
+                      </div>
+
+                      <h4 class="text-danger">${{ listing.listing.price|intcomma }}</h4>
+                  </div>
+                  <div class="auction-action d-flex align-items-center justify-content-between">
+                    <button type="button" class="btn btn-md btn-danger bid-btn" 
+                        {% if user.is_authenticated %}
+                            data-bs-toggle="modal" data-bs-target="#bid-modal-{{ listing.listing.slug }}"
+                        {% else %}
+                            onclick="window.location=`{% url 'login' %}`"
+                        {% endif %}
+                        {% if listing.listing.time_left_seconds < 1 or listing.listing.auctioneer == user %}
+                            disabled
+                        {% endif %}>
+                        Place a Bid
+                    </button>
+                      <div class="action-btns d-flex justify-content-between">
+                          {{ listing.listing|modify_watchlist_button:request }}
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
         {% empty %}
           <p style="color: blue; font-weight: bold; font-size: 30px;">
             You don't have any favourite active listings here yet!

@@ -15,4 +15,5 @@ urlpatterns = [
         name="category-listings",
     ),
     path("watch-list/", views.WatchListView.as_view(), name="watch-list"),
+    path("listings/<slug:listing_slug>/place-bid/", views.PlaceBidView.as_view(), name="place-bid"),
 ]

@@ -2,174 +2,222 @@
 {% load custom_tags %}
 <!doctype html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" href="{% static 'media/logo.png' %}" type="image/x-icon">
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="{% static 'media/logo.png' %}" type="image/x-icon">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/font/bootstrap-icons.css">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}?{% now 'U' %}">
-    <!--Sweet alert-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
-    <script src="{% static 'js/toast.js' %}"></script>
-    <title>Kay's Auction House | {% block title %}{% endblock %}</title>
-  </head>
-  <body>
-    {% if messages %}
-      {% for message in messages %}
-        <script>
-          Toast.fire({
-            icon: '{{ message.level_tag }}',
-            title: '{{ message }}'
-          })
-        </script>
-      {% endfor %}
-    {% endif %}
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg bg-light fixed-top fs-6">
-      <div class="container-fluid mx-4  d-flex justify-content-space-evenly">
-        <a class="navbar-brand me-auto" href="#"><img src="{% static 'media/header-logo2.png' %}" alt="logo" class="img-fluid"></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/font/bootstrap-icons.css">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}?{% now 'U' %}">
+  <!--Sweet alert-->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
+  <script src="{% static 'js/toast.js' %}"></script>
+  <title>Kay's Auction House | {% block title %}{% endblock %}</title>
+  <style>
+    .bid-btn:focus {
+      outline: none;
+      box-shadow: none;
+    }
+  </style>
+</head>
 
-          <ul class="navbar-nav mx-auto">
-            <li class="nav-item mx-2">
-              <a class="nav-link active" href="/">Home</a>
-            </li>
-            
-            <li class="nav-item mx-2">
-              <!-- same as auction details -->
-              <a class="nav-link" href="{% url 'listings' %}">Active Listings</a>
-            </li>
-            {% if not request.user.is_authenticated %}
-            <li class="nav-item mx-2">
-              <!-- same as auction details -->
-              <a class="nav-link" href="{% url 'login' %}">Login</a>
-            </li>
-            <li class="nav-item mx-2">
-              <!-- same as auction details -->
-              <a class="nav-link" href="{% url 'register' %}">Signup</a>
-            </li>
-            {% endif %}
-            <li class="nav-item mx-2">
-              <a class="nav-link" href="{% url 'watch-list' %}">Watch List</a>
-            </li>
-            <li class="nav-item mx-2">
-              <a class="nav-link" href="./additem.html">Create Listing</a>
-            </li>
+<body>
+  {% if messages %}
+  {% for message in messages %}
+  <script>
+    Toast.fire({
+      icon: '{{ message.level_tag }}',
+      title: '{{ message }}'
+    })
+  </script>
+  {% endfor %}
+  {% endif %}
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg bg-light fixed-top fs-6">
+    <div class="container-fluid mx-4  d-flex justify-content-space-evenly">
+      <a class="navbar-brand me-auto" href="#"><img src="{% static 'media/header-logo2.png' %}" alt="logo"
+          class="img-fluid"></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item mx-2">
+            <a class="nav-link active" href="/">Home</a>
+          </li>
+
+          <li class="nav-item mx-2">
+            <!-- same as auction details -->
+            <a class="nav-link" href="{% url 'listings' %}">Active Listings</a>
+          </li>
+          {% if not request.user.is_authenticated %}
+          <li class="nav-item mx-2">
+            <!-- same as auction details -->
+            <a class="nav-link" href="{% url 'login' %}">Login</a>
+          </li>
+          <li class="nav-item mx-2">
+            <!-- same as auction details -->
+            <a class="nav-link" href="{% url 'register' %}">Signup</a>
+          </li>
+          {% endif %}
+          <li class="nav-item mx-2">
+            <a class="nav-link" href="{% url 'watch-list' %}">Watch List</a>
+          </li>
+          <li class="nav-item mx-2">
+            <a class="nav-link" href="./additem.html">Create Listing</a>
+          </li>
 
 
-          </ul>
-          
-          <div class="top-control d-flex text-danger">
-            <a href="./dashboard.html">
-              
-              <button class="btn btn-md btn-danger my-3 mt-md-0">My Dashboard</button>
-            </a>
-          </div>
+        </ul>
 
+        <div class="top-control d-flex text-danger">
+          <a href="./dashboard.html">
+
+            <button class="btn btn-md btn-danger my-3 mt-md-0">My Dashboard</button>
+          </a>
         </div>
+
       </div>
-    </nav>
-    {% block content %}
-    {% endblock %}
-    <!-- Footer -->
-    {% footer %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js" integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="{% static 'js/script.js' %}"></script>
-    <script type="text/javascript">
-      $.ajaxSetup({
-        headers: {"X-CSRFToken": '{{csrf_token}}'}
-      })
-      // Get all the elements with the class "remaining-time"
-      var objectElements = document.querySelectorAll(".listing-object");
-    
-      // Update the remaining time for each object
-      objectElements.forEach(function(objectElement) {
-        // Get the remaining time element
-        var remainingTimeElement = objectElement.querySelector('.remaining-time')
+    </div>
+  </nav>
+  {% block content %}
+  {% endblock %}
+  <!-- Footer -->
+  {% footer %}
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
+    integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"
+    integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="{% static 'js/script.js' %}"></script>
+  <script type="text/javascript">
+    $.ajaxSetup({
+      headers: { "X-CSRFToken": '{{csrf_token}}' }
+    })
+    // Get all the elements with the class "remaining-time"
+    var objectElements = document.querySelectorAll(".listing-object");
 
-        // Get Bid Button
-        var bid_btn = objectElement.querySelector('.bid-btn')
-    
-        // Get the remaining time in seconds from the data attribute
-        var remainingTimeInSeconds = parseInt(objectElement.getAttribute("data-remaining-time"));
-    
-        // Update the remaining time every second
-        var countdownInterval = setInterval(function() {
-          // Decrease the remaining time by 1 second
-          remainingTimeInSeconds--;
-    
-          // Calculate the remaining days, hours, minutes, and seconds
-          var remainingDays = Math.floor(remainingTimeInSeconds / (60 * 60 * 24));
-          var remainingHours = Math.floor((remainingTimeInSeconds % (60 * 60 * 24)) / (60 * 60));
-          var remainingMinutes = Math.floor((remainingTimeInSeconds % (60 * 60)) / 60);
-          var remainingSeconds = remainingTimeInSeconds % 60;
-    
-          // Add leading zeros to the minute, second, and hour values if they are less than 10
-          var formattedDays = remainingDays.toString().padStart(2, "0");
-          var formattedHours = remainingHours.toString().padStart(2, "0");
-          var formattedMinutes = remainingMinutes.toString().padStart(2, "0");
-          var formattedSeconds = remainingSeconds.toString().padStart(2, "0");
-          
-          // Update the remaining time element with the new value
-          remainingTimeElement.innerText = "-" + formattedDays + "D :" + formattedHours + "H :" + formattedMinutes + "M :" + formattedSeconds + "S";
-    
-          // If the remaining time is less than or equal to 0, stop the countdown
-          if (remainingTimeInSeconds <= 0) {
-            clearInterval(countdownInterval);
-            remainingTimeElement.innerText = "Closed!!!";
-            bid_btn.disabled = true;
-          }
-        }, 1000); // Update the countdown every second (1000 milliseconds)
-      });
+    // Update the remaining time for each object
+    objectElements.forEach(function (objectElement) {
+      // Get the remaining time element
+      var remainingTimeElement = objectElement.querySelector('.remaining-time')
 
-      $('.watchlist-btn').on('click', function(e) {
-        var btn = $(this)
-        var listing_slug = btn.attr('data-listing-slug')
-        var action = btn.attr('data-action')
-        var method = "POST"
-        if (action == "remove") {
-          method = "DELETE"
+      // Get Bid Button
+      var bid_btn = objectElement.querySelector('.bid-btn')
+
+      // Get the remaining time in seconds from the data attribute
+      var remainingTimeInSeconds = parseInt(objectElement.getAttribute("data-remaining-time"));
+
+      // Update the remaining time every second
+      var countdownInterval = setInterval(function () {
+        // Decrease the remaining time by 1 second
+        remainingTimeInSeconds--;
+
+        // Calculate the remaining days, hours, minutes, and seconds
+        var remainingDays = Math.floor(remainingTimeInSeconds / (60 * 60 * 24));
+        var remainingHours = Math.floor((remainingTimeInSeconds % (60 * 60 * 24)) / (60 * 60));
+        var remainingMinutes = Math.floor((remainingTimeInSeconds % (60 * 60)) / 60);
+        var remainingSeconds = remainingTimeInSeconds % 60;
+
+        // Add leading zeros to the minute, second, and hour values if they are less than 10
+        var formattedDays = remainingDays.toString().padStart(2, "0");
+        var formattedHours = remainingHours.toString().padStart(2, "0");
+        var formattedMinutes = remainingMinutes.toString().padStart(2, "0");
+        var formattedSeconds = remainingSeconds.toString().padStart(2, "0");
+
+        // Update the remaining time element with the new value
+        remainingTimeElement.innerText = "-" + formattedDays + "D :" + formattedHours + "H :" + formattedMinutes + "M :" + formattedSeconds + "S";
+
+        // If the remaining time is less than or equal to 0, stop the countdown
+        if (remainingTimeInSeconds <= 0) {
+          clearInterval(countdownInterval);
+          remainingTimeElement.innerText = "Closed!!!";
+          bid_btn.disabled = true;
         }
-        
-        $.ajax({
-          url: "{% url 'watch-list' %}",
-          method: method,
-          data: JSON.stringify({
-            "listing_slug": listing_slug
-          }),
-          dataType: "json",
-          success: function(response){
-            if (response?.success){
-              btn.toggleClass('text-secondary text-danger')
-              var path = window.location.pathname
-              if (path === '/watch-list/'){
-                btn.parent().parent().parent().parent().parent().remove()
+      }, 1000); // Update the countdown every second (1000 milliseconds)
+    });
+
+    $('.watchlist-btn').on('click', function (e) {
+      var btn = $(this)
+      var listing_slug = btn.attr('data-listing-slug')
+      var action = btn.attr('data-action')
+      var method = "POST"
+      if (action == "remove") {
+        method = "DELETE"
+      }
+
+      $.ajax({
+        url: "{% url 'watch-list' %}",
+        method: method,
+        data: JSON.stringify({
+          "listing_slug": listing_slug
+        }),
+        dataType: "json",
+        success: function (response) {
+          if (response?.success) {
+            btn.toggleClass('text-secondary text-danger')
+            var path = window.location.pathname
+            if (path === '/watch-list/') {
+              btn.parent().parent().parent().parent().parent().remove()
+            } else {
+              if (action === "remove") {
+                btn.attr('data-action', 'add')
               } else {
-                if (action === "remove") {
-                  btn.attr('data-action', 'add')
-                } else {
-                  btn.attr('data-action', 'remove')
-                }
+                btn.attr('data-action', 'remove')
               }
             }
           }
-        })
+        }
       })
-    </script>
-    {% block js %}
-    {% endblock %}    
+    })
+
+    $('.modal').on('shown.bs.modal', function () {
+      // Reload the contents of the modal body here
+      $('#modal-content').load('/path/to/content');
+    });
+
+    // Place Bid
+    $('.bid-form').on('submit', function (e) {
+      e.preventDefault()
+      var form = $(this)
+      var input = form.find('input[name="amount"]')
+      $.ajax({
+        url: form.attr('action'),
+        method: form.attr('method'),
+        data: form.serialize(),
+        dataType: 'json',
+        success: function (response) {
+          if (response?.status === 'success') {
+            form.parent().parent().modal('hide')
+            Toast.fire({
+              icon: 'success',
+              title: 'Bid placed successfully'
+            })
+            form.find('.modal-title').html(`Highest Bid: $${response?.amount}`)
+            input.val('')
 
 
-  </body>
+          } else {
+            form.find('.error-container').html(`<p style="color: red; font-size: 12px; font-weight: bold; margin-top: 7px; margin-bottom: 0;">${response?.message}</p>`)
+          }
+        }
+      })
+    })
+  </script>
+  {% block js %}
+  {% endblock %}
+
+
+</body>
+
 </html>

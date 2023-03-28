@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Max
 from django.urls import reverse
 from apps.common.models import TimeStampedUUIDModel
 from django.contrib.auth import get_user_model
@@ -67,17 +68,35 @@ class Listing(TimeStampedUUIDModel):
         remaining_seconds = remaining_time.total_seconds()
         return remaining_seconds
 
+    @property
+    def get_highest_bid(self):
+        highest_bid = 0.00
+        related_bids = self.bids.all()
+        if related_bids.exists():
+            highest_bid = related_bids.aggregate(max_bid=Max("amount"))["max_bid"]
+            highest_bid = related_bids.filter(amount=highest_bid).first().amount
+
+        return highest_bid
+
     class Meta:
         ordering = ["-created_at"]
 
 
 class Bid(TimeStampedUUIDModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
+    listing = models.ForeignKey(Listing, related_name="bids", on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=100, decimal_places=2, null=True)
 
     def __str__(self):
         return f"{self.listing.name} - ${self.amount}"
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["listing", "amount"],
+                name="unique_listing_amount_bid",
+            )
+        ]
 
 
 class WatchList(TimeStampedUUIDModel):

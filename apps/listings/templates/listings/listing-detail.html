@@ -24,16 +24,20 @@
                   <h4 class="fw-bold">{{ listing.name }}</h4>
                   <p>{{ listing.desc }}</p>
                   <p class="fs-5">Bidding Price: <span class="bidding-price text-danger">${{ listing.price }}</span></p>
-              </div>
+                  <p class="fs-5">Highest Bid: <span class="bidding-price text-danger">${{ listing.get_highest_bid }}</span></p>
+                </div>
               <div class="bid-control bg-light pt-3 px-3">
                   <p class="fw-bold">Place your bid now</p>
                   <p>Bid Amount:</p>
-                  <form action="" class="d-grid gap-3">
-                      <input type="number" name="number" id="bid-price" placeholder="$0.00" class="form-control">
+                  <form method="POST" action="{% url 'place-bid' listing.slug %}" class="d-grid gap-3 bid-form">
+                    {% csrf_token %}
+                      <input type="number" step=".01" id="bid-price" placeholder="$0.00" class="form-control">
                       <div class="text-center d-grid d-lg-flex justify-content-lg-between justify-content-center">
                           <button type="submit" class="btn btn-success mb-3 px-3">Place bid</button>
                           {% if user == listing.auctioneer %}
                             <button type="submit" class="btn btn-danger mb-3 px-3">Close Auction</button>
+                          {% else %}
+                            
                           {% endif %}
                       </div>
                   </form>
@@ -49,7 +53,7 @@
             {% for bid in latest_bids %}
             <div class="bidprofile mt-3 p-3 border rounded d-flex gap-4 align-items-center">
               <div class="profile">
-                <img src="{{ bid.user.avatarURL }}" alt="author1" class="img-fluid">
+                <img style="max-width: 40px;" src="{{ bid.user.avatarURL }}" alt="author1" class="img-fluid rounded-circle">
               </div>
               <div class="profile-details d-grid gap-1">
                 <h5 class="name">{{ bid.user.full_name }}</h5>
