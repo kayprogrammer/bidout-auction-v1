@@ -65,8 +65,7 @@ class WatchListView(View):
     def get(self, request):
         user = request.user
         listings = WatchList.objects.filter(
-            Q(user_id=user.pk, session_key=None)
-            | Q(user=None, session_key=user)
+            Q(user_id=user.pk, session_key=None) | Q(user=None, session_key=user)
         ).select_related("user", "listing")
         context = {"listings": listings}
         return render(request, "listings/watchlist.html", context)
@@ -87,8 +86,7 @@ class WatchListView(View):
         user = request.user
         listing_slug = data.get("listing_slug")
         watch_list = WatchList.objects.filter(
-            Q(user_id=user.pk, session_key=None)
-            | Q(user=None, session_key=user)
+            Q(user_id=user.pk, session_key=None) | Q(user=None, session_key=user)
         ).filter(listing__slug=listing_slug)
         watch_list.delete()
         return JsonResponse({"success": True})
@@ -111,9 +109,7 @@ class PlaceBidView(LoginRequiredMixin, View):
                     "message"
                 ] = "Bid amount cannot be less than the bidding price!"
             elif amount <= listing.get_highest_bid:
-                response[
-                    "message"
-                ] = "Bid amount must be more than the highest bid!"
+                response["message"] = "Bid amount must be more than the highest bid!"
             else:
                 bid = Bid.objects.create(
                     user=request.user, listing=listing, amount=amount

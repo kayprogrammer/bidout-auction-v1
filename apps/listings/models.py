@@ -17,7 +17,9 @@ class Category(TimeStampedUUIDModel):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("category-listings", kwargs={"category_slug": self.slug})
+        return reverse(
+            "category-listings", kwargs={"category_slug": self.slug}
+        )
 
     class Meta:
         verbose_name_plural = "Categories"
@@ -60,7 +62,9 @@ class Listing(TimeStampedUUIDModel):
             days, seconds = divmod(int(remaining_seconds), 86400)
             hours, seconds = divmod(seconds, 3600)
             minutes, seconds = divmod(seconds, 60)
-            return f"-{days:02d}D :{hours:02d}H :{minutes:02d}M :{seconds:02d}S"
+            return (
+                f"-{days:02d}D :{hours:02d}H :{minutes:02d}M :{seconds:02d}S"
+            )
 
     @property
     def time_left_seconds(self):
@@ -73,8 +77,12 @@ class Listing(TimeStampedUUIDModel):
         highest_bid = 0.00
         related_bids = self.bids.all()
         if related_bids.exists():
-            highest_bid = related_bids.aggregate(max_bid=Max("amount"))["max_bid"]
-            highest_bid = related_bids.filter(amount=highest_bid).first().amount
+            highest_bid = related_bids.aggregate(max_bid=Max("amount"))[
+                "max_bid"
+            ]
+            highest_bid = (
+                related_bids.filter(amount=highest_bid).first().amount
+            )
 
         return highest_bid
 
@@ -84,7 +92,9 @@ class Listing(TimeStampedUUIDModel):
 
 class Bid(TimeStampedUUIDModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    listing = models.ForeignKey(Listing, related_name="bids", on_delete=models.CASCADE)
+    listing = models.ForeignKey(
+        Listing, related_name="bids", on_delete=models.CASCADE
+    )
     amount = models.DecimalField(max_digits=100, decimal_places=2, null=True)
 
     def __str__(self):
