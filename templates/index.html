@@ -191,6 +191,7 @@
       e.preventDefault()
       var form = $(this)
       var input = form.find('input[name="amount"]')
+      var err_container = form.find('.error-container')
       $.ajax({
         url: form.attr('action'),
         method: form.attr('method'),
@@ -198,17 +199,55 @@
         dataType: 'json',
         success: function (response) {
           if (response?.status === 'success') {
-            form.parent().parent().modal('hide')
+            input.blur();
+            if (response?.page === 'detail'){
+              err_container.children().remove()
+              form.parent().parent().find('.detail-highest-bid').html(`$${response?.amount}`)
+              $('.empty-latest').remove()
+
+              var current_user_id = "{{ request.user.id }}"
+              var bid_data = `
+                <div data-user-id="${current_user_id}" class="bidprofile mt-3 p-3 border rounded d-flex gap-4 align-items-center">
+                  <div class="profile">
+                    <img style="max-width: 40px;" src="{{ user.avatarURL }}" alt="author1" class="img-fluid rounded-circle">
+                  </div>
+                  <div class="profile-details d-grid gap-1">
+                    <h5 class="name">{{ user.full_name }}</h5>
+                    <h5 class="setbid">Bid Price: $${ response?.amount }</h5>
+                  </div>
+                </div>
+              `
+              var related_bid_user = $(`.bidprofile[data-user-id='${current_user_id}']`)
+              console.log(related_bid_user)
+              var bid_profile = $('.bidprofile')
+              if (bid_profile.length === 0){
+                $('.latest-bids').children().after(bid_data)
+              }else {
+                $('.bidprofile:first').before(bid_data);
+                if (related_bid_user.length < 1){
+                  if (bid_profile.length > 2){
+                    $('.bidprofile:last').remove();
+                  }
+                } else {
+                  related_bid_user.remove()
+                }
+              }
+
+
+            } else {
+              form.parent().parent().modal('hide')
+              form.find('.modal-title').html(`Highest Bid: $${response?.amount}`)
+
+            }
             Toast.fire({
               icon: 'success',
               title: 'Bid placed successfully'
             })
-            form.find('.modal-title').html(`Highest Bid: $${response?.amount}`)
             input.val('')
 
 
           } else {
-            form.find('.error-container').html(`<p style="color: red; font-size: 12px; font-weight: bold; margin-top: 7px; margin-bottom: 0;">${response?.message}</p>`)
+            err_container.html(`<p style="color: red; font-size: 12px; font-weight: bold; margin-top: 7px; margin-bottom: 0;">${response?.message}</p>`)
           }
         }
       })

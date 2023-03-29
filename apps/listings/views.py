@@ -97,26 +97,33 @@ class PlaceBidView(LoginRequiredMixin, View):
         user = request.user
         listing = get_object_or_404(Listing, slug=kwargs.get("listing_slug"))
         amount = request.POST.get("amount")
+        page = request.POST.get("page")
         response = {"status": "error"}
-
-        if listing.auctioneer == user:
-            response["message"] = "You can't bid your product!"
 
         if amount:
             amount = Decimal(amount)
-            if amount < listing.price:
+            if listing.auctioneer == user:
+                response["message"] = "You can't bid your product!"
+            elif not listing.active:
+                response["message"] = "This auction is closed!"
+            elif listing.time_left_seconds < 1:
+                response["message"] = "This auction is expired and closed!"
+            elif amount < listing.price:
                 response[
                     "message"
                 ] = "Bid amount cannot be less than the bidding price!"
             elif amount <= listing.get_highest_bid:
                 response["message"] = "Bid amount must be more than the highest bid!"
             else:
-                bid = Bid.objects.create(
-                    user=request.user, listing=listing, amount=amount
+                bid, created = Bid.objects.get_or_create(
+                    user=request.user, listing=listing
                 )
+                bid.amount = amount
+                bid.save()
                 response["status"] = "success"
                 amount = round(bid.amount, 2)
                 response["amount"] = f"{amount:,}"
+                response["page"] = page
 
         return JsonResponse(response)
 
