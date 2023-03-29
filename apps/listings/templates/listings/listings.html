@@ -67,7 +67,7 @@
       <div class="col-12 col-md-6 col-lg-4 p-3 auction-card text-center listing-object" data-remaining-time="{{ listing.time_left_seconds }}">
           <div class=" p-3 auction border border-outline-1">
               <div role="button" onclick="window.location=`{{ listing.get_absolute_url }}`" class="auction-photo">
-                  <img src="{{ listing.imageURL }}" alt="auction-1" class="img-fluid">
+                  <img style="width: 93%; height: 245px; object-fit: cover;" src="{{ listing.imageURL }}" alt="auction-1" class="img-fluid">
                   <p class="fw-bold auction-time text-danger bg-white m-0 p-3 mx-auto remaining-time">{{ listing.time_left }}</p>
               </div>
               <div class="auction-details">
