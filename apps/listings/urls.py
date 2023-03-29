@@ -20,4 +20,9 @@ urlpatterns = [
         views.PlaceBidView.as_view(),
         name="place-bid",
     ),
+    path(
+        "listings/create",
+        views.CreateListingView.as_view(),
+        name="create-listing",
+    ),
 ]

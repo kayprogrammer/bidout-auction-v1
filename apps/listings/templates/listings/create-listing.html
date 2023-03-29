@@ -1,0 +1,96 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block content %}
+    <style>
+      .errors{
+        color: red;
+        font-size: 13px;
+        font-weight: bold;
+      }
+    </style>
+    <!-- Header Section -->
+    <div class="container-fluid bg-danger py-5 text-white">
+        <div class="row pt-5">
+            <div class="col-12 col-lg-10">
+                <h1 class="display-5 fw-bold ms-0 ps-0 ms-md-5 ps-md-5 pt-3">Create a Listing</h1>
+            </div>
+        </div>
+    </div>
+    <main>
+        <div class="container">
+              <form method="POST" id="createListing" class="w-100 row py-5" enctype="multipart/form-data">
+                {% csrf_token %}
+                <!-- image -->
+                <div class="mb-3 d-block">
+                  <label for="auctionImage" class="form-label fs-4">Upload a clear image of your item</label>
+                  {{ form.image }}
+                  <p class="errors mb-0">{{ form.errors.image.as_text }}</p>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <div class="mb-3 d-block">
+                    <label for="productName" class="form-label fs-5">Product Name</label>
+                    {{ form.name }}
+                    <p class="errors">{{ form.errors.name.as_text }}</p>
+                  </div>
+
+                  <div class="mb-3 d-block">
+                    <label for="category" class="form-label fs-5">Select Product Category</label>
+                    {{ form.category }}
+                    <p class="errors">{{ form.errors.category.as_text }}</p>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="biddingPrice" class="form-label fs-5">Bidding Price</label>
+                    <div class="pricing d-flex align-items-center">
+  
+                      <i class="fa fa-usd price-icon"></i>
+                      {{ form.price }}
+                      <p class="errors">aa</p>
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="biddingPrice" class="form-label fs-5">Closing Date</label>
+                    <div class="d-block align-items-center">
+  
+                      {{ form.closing_date }}
+                      <p class="errors">{{ form.errors.closing_date.as_text }}</p>
+                    </div>
+                  </div>
+
+                  
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <div class="mb-3 d-block">
+                    <label for="description" class="form-label fs-5">Product description</label>
+                    {{ form.desc }}
+                    <p class="errors">{{ form.errors.desc.as_text }}</p>
+                  </div>
+                </div>
+
+                <div class="col-12 mt-5 text-center">
+                  <button type="submit" class="btn btn-lg btn-success btn-primary">Create Listing</button>
+                </div>
+
+
+                
+              </form>
+        </div>
+    </main>
+{% endblock %}
+
+{% block js %}
+    <script>
+      $(document).ready(function(){
+          elem = document.getElementById("id_closing_date")
+          var date = new Date()
+          date.setSeconds(0,0)
+          var iso = date.toISOString();
+          var minDate = iso.substring(0,iso.length-1);
+          elem.min = minDate
+      });
+    </script>
+{% endblock %}

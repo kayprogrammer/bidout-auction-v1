@@ -59,22 +59,26 @@
             <!-- same as auction details -->
             <a class="nav-link" href="{% url 'listings' %}">Active Listings</a>
           </li>
-          {% if not request.user.is_authenticated %}
-          <li class="nav-item mx-2">
-            <!-- same as auction details -->
-            <a class="nav-link" href="{% url 'login' %}">Login</a>
-          </li>
-          <li class="nav-item mx-2">
-            <!-- same as auction details -->
-            <a class="nav-link" href="{% url 'register' %}">Signup</a>
-          </li>
-          {% endif %}
           <li class="nav-item mx-2">
             <a class="nav-link" href="{% url 'watch-list' %}">Watch List</a>
           </li>
-          <li class="nav-item mx-2">
-            <a class="nav-link" href="./additem.html">Create Listing</a>
-          </li>
+          {% if not user.is_authenticated %}
+            <li class="nav-item mx-2">
+              <!-- same as auction details -->
+              <a class="nav-link" href="{% url 'login' %}">Login</a>
+            </li>
+            <li class="nav-item mx-2">
+              <!-- same as auction details -->
+              <a class="nav-link" href="{% url 'register' %}">Signup</a>
+            </li>
+          {% else %}
+            <li class="nav-item mx-2">
+              <a class="nav-link" href="{% url 'create-listing' %}">Create Listing</a>
+            </li>
+            <li class="nav-item mx-2" style="display: flex; align-items: center;">
+              <a class="nav-link fa fa-sign-out" href="{% url 'logout' %}"></a>
+            </li>
+          {% endif %}
 
 
         </ul>
@@ -99,11 +103,23 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"
     integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="{% static 'js/script.js' %}"></script>
   <script type="text/javascript">
     $.ajaxSetup({
       headers: { "X-CSRFToken": '{{csrf_token}}' }
     })
+
+    var localtz = Intl.DateTimeFormat().resolvedOptions().timeZone
+    document.cookie = 'localtz=' + localtz + ";domain=;path=/"
+    // Ensure page reloads twice if its the first visit. 
+    var alreadyVisited = localStorage.getItem("alreadyVisited")
+    if(!alreadyVisited) {
+      console.log('yea')
+      // first time loaded!
+      localStorage.setItem("alreadyVisited", "True");
+      window.location.href = "{{request.path}}"
+      
+    }
+
     // Get all the elements with the class "remaining-time"
     var objectElements = document.querySelectorAll(".listing-object");
 

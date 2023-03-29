@@ -10,7 +10,12 @@ class TimezoneMiddleware:
         user = request.user
 
         try:
-            tzname = user.tz.name if user.tz else None
+            tzname = "UTC"
+            localtz = request.COOKIES.get("localtz")
+            if user.tz:
+                tzname = user.tz.name
+            elif localtz:
+                tzname = localtz
             timezone.activate(tzname)
         except:
             timezone.deactivate()

@@ -1,11 +1,15 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django.http import Http404, JsonResponse
 from django.views import View
-from apps.accounts.mixins import LoginRequiredMixin
 from django.db.models import Q
-from decimal import Decimal
+from django.contrib import messages
 
+from apps.accounts.mixins import LoginRequiredMixin
 from .models import Listing, Category, WatchList, Bid
+from .forms import CreateListingForm
+
+from decimal import Decimal
 import json
 
 
@@ -126,6 +130,24 @@ class PlaceBidView(LoginRequiredMixin, View):
                 response["page"] = page
 
         return JsonResponse(response)
+
+
+class CreateListingView(LoginRequiredMixin, View):
+    def get(self, request):
+        form = CreateListingForm()
+        context = {"form": form}
+        return render(request, "listings/create-listing.html", context)
+
+    def post(self, request):
+        form = CreateListingForm(request.POST, request.FILES)
+        if form.is_valid():
+            listing = form.save(commit=False)
+            listing.auctioneer = request.user
+            listing.save()
+            messages.success(request, "Listing created successfully")
+            return redirect("/")
+        print(form.errors)
+        return render(request, "listings/create-listing.html", {"form": form})
 
 
 class DashboardView(LoginRequiredMixin, View):
