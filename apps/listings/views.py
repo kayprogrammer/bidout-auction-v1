@@ -50,10 +50,15 @@ class AuctionDetailView(View):
 class AuctionsByCategoryView(View):
     def get(self, request, *args, **kwargs):
         categories = Category.objects.all()
-        category = categories.filter(slug=kwargs.get("category_slug"))
-        if not category:
-            raise Http404("Category Not Found")
-        category = category.get()
+        category_slug = kwargs.get("category_slug")
+        category = categories.filter(slug=category_slug)
+        if not category.exists():
+            if not category_slug == "other":
+                raise Http404("Category Not Found")
+            category = None
+        else:
+            category = category.get()
+
         listings = Listing.objects.filter(category=category).select_related(
             "auctioneer", "category"
         )
@@ -135,10 +140,12 @@ class PlaceBidView(LoginRequiredMixin, View):
 class CreateListingView(LoginRequiredMixin, View):
     def get(self, request):
         form = CreateListingForm()
-        context = {"form": form}
+        categories = Category.objects.all()
+        context = {"form": form, "categories": categories}
         return render(request, "listings/create-listing.html", context)
 
     def post(self, request):
+        categories = Category.objects.all()
         form = CreateListingForm(request.POST, request.FILES)
         if form.is_valid():
             listing = form.save(commit=False)
@@ -147,7 +154,8 @@ class CreateListingView(LoginRequiredMixin, View):
             messages.success(request, "Listing created successfully")
             return redirect("/")
         print(form.errors)
-        return render(request, "listings/create-listing.html", {"form": form})
+        context = {"form": form, "categories": categories}
+        return render(request, "listings/create-listing.html", context)
 
 
 class DashboardView(LoginRequiredMixin, View):

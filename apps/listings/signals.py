@@ -1,7 +1,5 @@
-from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
-from django.utils.text import slugify
 from django.utils import timezone
 from .models import Listing, Category
 from .test_data.listings import test_listings, test_categories
@@ -54,7 +52,8 @@ def create_initial_listings(sender, **kwargs):
         print("  -------------------------  ")
 
         auctioneer = User.objects.get(email="testauctioneer@email.com")
-        categories = Category.objects.all()
+        categories = list(Category.objects.all())
+        categories.append(None)
         listings = []
         for idx, image_file in enumerate(os.listdir(test_images_directory)):
             if image_file.endswith(".png"):

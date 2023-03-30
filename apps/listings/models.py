@@ -1,10 +1,14 @@
 from django.db import models
 from django.db.models import Max
 from django.urls import reverse
-from apps.common.models import TimeStampedUUIDModel
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from django.core.exceptions import ValidationError
+
 from autoslug import AutoSlugField
+
+from apps.common.models import TimeStampedUUIDModel
+
 
 User = get_user_model()
 
@@ -18,6 +22,10 @@ class Category(TimeStampedUUIDModel):
 
     def get_absolute_url(self):
         return reverse("category-listings", kwargs={"category_slug": self.slug})
+
+    def clean(self):
+        if self.name == "Other":
+            raise ValidationError("Name must not be 'Other'")
 
     class Meta:
         verbose_name_plural = "Categories"

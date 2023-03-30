@@ -3,6 +3,10 @@ from django.utils import timezone
 from .models import Category, Listing
 from zoneinfo import ZoneInfo
 
+category_choices = list(Category.objects.values_list("name", "name"))
+category_choices.insert(0, ("", "Choose a Category"))
+category_choices.append(("Other", "Other"))
+
 
 class CreateListingForm(forms.ModelForm):
     name = forms.CharField(
@@ -17,10 +21,11 @@ class CreateListingForm(forms.ModelForm):
     desc = forms.CharField(
         widget=forms.Textarea(attrs={"class": "form-control", "rows": "6"})
     )
-    category = forms.ModelChoiceField(
-        queryset=Category.objects.all(),
-        empty_label="Choose a Category",
-        widget=forms.Select({"class": "form-select form-select-md"}),
+    category = forms.ChoiceField(
+        choices=category_choices,
+        widget=forms.Select(
+            attrs={"class": "form-select form-select-md"},
+        ),
     )
     price = forms.DecimalField(
         widget=forms.NumberInput(
@@ -50,6 +55,19 @@ class CreateListingForm(forms.ModelForm):
             }
         )
     )
+
+    def clean_category(self):
+        category_name = self.cleaned_data.get("category")
+
+        category = Category.objects.filter(name=category_name)
+        if not category.exists():
+            if not category_name == "Other":
+                raise forms.ValidationError("Please select a valid category.")
+            self.fields["category"].required = False
+            category = None
+        else:
+            category = category.get()
+        return category
 
     def clean_closing_date(self):
         closing_date = self.cleaned_data["closing_date"]

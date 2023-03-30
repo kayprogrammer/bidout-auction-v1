@@ -9,4 +9,4 @@ test_listings = [
 ]
 
 # names must be unique
-test_categories = ["Technology", "Accessories", "Automobile", "Fashion", "Other"]
+test_categories = ["Technology", "Accessories", "Automobile", "Fashion"]

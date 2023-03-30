@@ -80,7 +80,8 @@ li{
 }
 .price-icon{
     position: absolute;
-    margin-left: 20px;
+    left: 20px;
+    top: 11px;
 }
 
 /* Sweetify toasts design */

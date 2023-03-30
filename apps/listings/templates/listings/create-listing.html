@@ -43,11 +43,11 @@
 
                   <div class="mb-3">
                     <label for="biddingPrice" class="form-label fs-5">Bidding Price</label>
-                    <div class="pricing d-flex align-items-center">
+                    <div class="pricing d-flex align-items-center" style="position: relative; flex-wrap: wrap;">
   
                       <i class="fa fa-usd price-icon"></i>
                       {{ form.price }}
-                      <p class="errors">aa</p>
+                      <p class="errors" style="flex: 0 0 100%;">{{ form.errors.price.as_text }}</p>
                     </div>
                   </div>
 
