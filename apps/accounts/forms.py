@@ -50,10 +50,14 @@ class CustomErrorMessages:
 
 class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(
-        label="First name", widget=forms.TextInput(attrs={"class": "form-control"})
+        max_length=25,
+        label="First name",
+        widget=forms.TextInput(attrs={"class": "form-control"}),
     )
     last_name = forms.CharField(
-        label="Last name", widget=forms.TextInput(attrs={"class": "form-control"})
+        max_length=25,
+        label="Last name",
+        widget=forms.TextInput(attrs={"class": "form-control"}),
     )
     email = forms.EmailField(
         label="Your email address",

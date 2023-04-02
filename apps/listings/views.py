@@ -1,13 +1,14 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
 from django.http import Http404, JsonResponse
 from django.views import View
 from django.db.models import Q
 from django.contrib import messages
+from django.utils import timezone
+from django.urls import reverse
 
 from apps.accounts.mixins import LoginRequiredMixin
 from .models import Listing, Category, WatchList, Bid
-from .forms import CreateListingForm
+from .forms import CreateListingForm, UpdateProfileForm
 
 from decimal import Decimal
 import json
@@ -18,7 +19,7 @@ class AllAuctionsView(View):
         listings = Listing.objects.select_related("auctioneer")
         categories = Category.objects.all()
         context = {"listings": listings, "categories": categories}
-        return render(request, "listings/listings.html", context)
+        return render(request, "listings/general/listings.html", context)
 
 
 class AuctionDetailView(View):
@@ -44,7 +45,7 @@ class AuctionDetailView(View):
             "related_listings": related_listings,
             "latest_bids": latest_bids,
         }
-        return render(request, "listings/listing-detail.html", context)
+        return render(request, "listings/general/listing-detail.html", context)
 
 
 class AuctionsByCategoryView(View):
@@ -67,7 +68,7 @@ class AuctionsByCategoryView(View):
             "categories": categories,
             "category": category,
         }
-        return render(request, "listings/listings.html", context)
+        return render(request, "listings/general/listings.html", context)
 
 
 class WatchListView(View):
@@ -77,7 +78,7 @@ class WatchListView(View):
             Q(user_id=user.pk, session_key=None) | Q(user=None, session_key=user)
         ).select_related("user", "listing")
         context = {"listings": listings}
-        return render(request, "listings/watchlist.html", context)
+        return render(request, "listings/general/watchlist.html", context)
 
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body)
@@ -142,7 +143,7 @@ class CreateListingView(LoginRequiredMixin, View):
         form = CreateListingForm()
         categories = Category.objects.all()
         context = {"form": form, "categories": categories}
-        return render(request, "listings/create-listing.html", context)
+        return render(request, "listings/dashboard/create-listing.html", context)
 
     def post(self, request):
         categories = Category.objects.all()
@@ -160,6 +161,86 @@ class CreateListingView(LoginRequiredMixin, View):
 
 class DashboardView(LoginRequiredMixin, View):
     def get(self, request):
+        user = request.user
+        listings = Listing.objects.filter(auctioneer=user).select_related(
+            "auctioneer", "category"
+        )[:10]
+        form = UpdateProfileForm(instance=user)
+        context = {"listings": listings, "form": form}
+        return render(request, "listings/dashboard/main.html", context)
 
-        context = {}
-        return render(request, "listings/dashboard.html", context)
+    def put(self, request):
+        user = request.user
+        form = UpdateProfileForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully")
+        return redirect(reverse("dashboard"))
+
+
+class AuctioneerListingsView(LoginRequiredMixin, View):
+    def get(self, request):
+        user = request.user
+        listings = Listing.objects.filter(auctioneer=user).select_related(
+            "auctioneer", "category"
+        )
+        context = {"listings": listings}
+        return render(request, "listings/dashboard/all-listings.html", context)
+
+
+class AuctioneerListingBidsView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        listing = get_object_or_404(
+            Listing, auctioneer=user, slug=kwargs.get("listing_slug")
+        )
+        bids = listing.bids.all()
+        context = {"listing": listing, "bids": bids}
+        return render(request, "listings/dashboard/bids.html", context)
+
+
+class UpdateListingStatus(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        listing = get_object_or_404(
+            Listing, auctioneer=request.user, slug=kwargs.get("listing_slug")
+        )
+        if listing.active and listing.time_left_seconds > 0:
+            listing.active = False
+        else:
+            if listing.closing_date < timezone.now():
+                messages.error(request, "Auction already expired!")
+                return redirect(request.META.get("HTTP_REFERER"))
+            listing.active = True
+        listing.save()
+        return redirect(request.META.get("HTTP_REFERER"))
+
+
+class UpdateListingView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        listing = get_object_or_404(
+            Listing, auctioneer=user, slug=kwargs.get("listing_slug")
+        )
+        form = CreateListingForm(
+            instance=listing, initial={"category": listing.category or "Other"}
+        )
+        categories = Category.objects.all()
+        context = {"listing": listing, "form": form, "categories": categories}
+        return render(request, "listings/dashboard/create-listing.html", context)
+
+    def put(self, request, *args, **kwargs):
+        user = request.user
+        categories = Category.objects.all()
+        listing = get_object_or_404(
+            Listing, auctioneer=user, slug=kwargs.get("listing_slug")
+        )
+        form = CreateListingForm(request.POST, request.FILES, instance=listing)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Listing updated successfully")
+            return redirect(
+                reverse("update-listing", kwargs={"listing_slug": listing.slug})
+            )
+        print(form.errors)
+        context = {"form": form, "categories": categories}
+        return render(request, "listings/create-listing.html", context)

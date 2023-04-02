@@ -45,10 +45,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     pkid = models.BigAutoField(primary_key=True, editable=False)
     id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     first_name = models.CharField(
-        verbose_name=(_("First name")), max_length=255, null=True
+        verbose_name=(_("First name")), max_length=25, null=True
     )
     last_name = models.CharField(
-        verbose_name=(_("Last name")), max_length=255, null=True
+        verbose_name=(_("Last name")), max_length=25, null=True
     )
     email = models.EmailField(verbose_name=(_("Email address")), unique=True)
     tz = models.ForeignKey(

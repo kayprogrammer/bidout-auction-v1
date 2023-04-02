@@ -1,0 +1,36 @@
+<section class="container mt-0">
+    <form method="PUT" id="createListing" class="w-100 row py-0" enctype="multipart/form-data">
+      {% csrf_token %}
+      <!-- image -->
+        <div class="col-12 col-md-6">
+            <div class="mb-3" style="display: flex; flex-direction: column;">
+                <label for="auctionImage" class="form-label fs-4">Avatar</label>
+                <img style="margin-bottom: 10px; width: 100%; height: 350px; object-fit: cover;" src="{{ user.avatarURL }}"/>
+                {{ form.avatar }}
+                <p class="errors mb-0">{{ form.errors.avatar.as_text }}</p>
+            </div>
+        </div>
+
+      <div class="col-12 col-md-6">
+        <div class="mb-3 d-block">
+          <label for="productName" class="form-label fs-5">First Name</label>
+          {{ form.first_name }}
+          <p class="errors">{{ form.errors.first_name.as_text }}</p>
+        </div>
+
+        <div class="mb-3 d-block">
+            <label for="productName" class="form-label fs-5">Last Name</label>
+            {{ form.last_name }}
+            <p class="errors">{{ form.errors.last_name.as_text }}</p>
+        </div>
+
+      </div>
+
+      <div class="col-12 mt-5 text-center">
+        <button type="submit" class="btn btn-lg btn-success btn-primary">Update Profile</button>
+      </div>
+
+
+      
+    </form>
+</section>

@@ -1,0 +1,47 @@
+{% extends "index.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+    <!-- Header Section -->
+    <div class="container-fluid bg-danger py-5 text-white">
+        <div class="row pt-5">
+            <div class="col-12 col-lg-10 d-grid gap-3 d-md-flex justify-content-between align-items-center">
+                <h1 class="display-5 fw-bold ms-0 ps-0 ms-md-5 ps-md-5 pt-3">My Listings</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid" style="padding: 40px;">
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                <th scope="col">S/N</th>
+                <th scope="col">Product</th>
+                <th scope="col">Status</th>
+                <th scope="col">Bids</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for listing in listings %}
+                    <tr>
+                        <th class="text-primary" scope="row" role="button" onclick="window.location=`{{ listing.get_absolute_url }}`">{{ forloop.counter }}</th>
+                        <td>{{ listing.name }}</td>
+                        <td>
+                            {% if listing.time_left_seconds > 0 %}
+                            <span class="text-success">Active <i role="button" class="fa fa-exchange" onclick="window.location=`{% url 'listing-status-update' listing.slug %}`"></i></span>
+                            {% else %}
+                            <span class="text-danger">Closed <i role="button" class="fa fa-exchange" onclick="window.location=`{% url 'listing-status-update' listing.slug %}`"></i></span>
+                            {% endif %}
+                        </td>
+                        <td class="text-primary" role="button" onclick="window.location=`{% url 'auctioneer-listing-bids' listing.slug %}`">{{ listing.bids.all.count }}</td>
+                    </tr>
+                {% empty %}
+                <tr>
+                <td colspan="5" class="text-center text-primary fw-bold">You haven't created any listings yet! <a class="text-decoration-underline" href="{% url 'create-listing' %}">Create Now!</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "index.html" %}
+{% load static %}
+{% load humanize %}
+{% load custom_filters %}
+
+{% block content %}
+<!-- Header Section -->
+<div class="container-fluid bg-primary py-5 text-white">
+  <div class="row pt-5">
+    <div class="col-12 col-lg-10">
+      <h1 class="display-5 fw-bold ms-0 ps-0 ms-md-5 ps-md-5 pt-3">Dashboard</h1>
+    </div>
+  </div>
+</div>
+<main>
+  <div class="container">
+    <div class="row py-5 ">
+      <div class="col-12 col-md-3">
+        <div class="col dashboard-list py-3 px-4 bg-success my-3">Dashboard</div>
+        <div class="col dashboard-list py-3 px-4 border my-3">My Profile</div>
+        <div class="col dashboard-list py-3 px-4 border my-3">Order Bidding</div>
+        <div class="col dashboard-list py-3 px-4 border my-3">Purchase</div>
+        <div class="col dashboard-list py-3 px-4 border my-3 bg-danger text-white">Logout</div>
+      </div>
+      <div class="col-12 col-md-9 my-3">
+        {% include "listings/dashboard/few-listings.html" %}
+        {% comment %} {% include "listings/dashboard/profile.html" %} {% endcomment %}
+        <!-- <div class="row m-0">
+                        <div class="col-12 col-md-6 p-0 dashboard-item mb-4 border">
+                            <h5 class="bg-black px-4 py-3 text-white">
+                                Order Pending
+                            </h5>
+                            <div class="order-pending px-4 py-4">
+                                <h3 id="pending-orders" class="display-5 fw-bold"><span>00</span></h3>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 p-0 dashboard-item mb-4 border">
+                            <h5 class="bg-black px-4 py-3 text-white">
+                                Orders in Processing
+                            </h5>
+                            <div class="order-pending px-4 py-4">
+                                <h3 id="pending-orders" class="display-5 fw-bold"><span>60</span></h3>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 p-0 dashboard-item mb-4 border">
+                            <h5 class="bg-black px-4 py-3 text-white">
+                                Delivered
+                            </h5>
+                            <div class="order-pending px-4 py-4">
+                                <h3 id="pending-orders" class="display-5 fw-bold"><span>40</span></h3>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 p-0 dashboard-item mb-4 border">
+                            <h5 class="bg-black px-4 py-3 text-white">
+                                Total Completed Orders
+                            </h5>
+                            <div class="order-pending px-4 py-4">
+                                <h3 id="pending-orders" class="display-5 fw-bold"><span>70</span></h3>
+                            </div>
+                        </div>
+                    </div> -->
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

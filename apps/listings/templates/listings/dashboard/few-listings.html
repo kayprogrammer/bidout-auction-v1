@@ -1,0 +1,37 @@
+<table class="table">
+    <thead class="thead-light">
+        <tr>
+        <th scope="col">S/N</th>
+        <th scope="col">Product</th>
+        <th scope="col">Status</th>
+        <th scope="col">Bids</th>
+        <th scope="col">Update</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for listing in listings %}
+        <tr>
+            <th class="text-primary" scope="row" role="button" onclick="window.location=`{{ listing.get_absolute_url }}`">{{ forloop.counter }}</th>
+            <td>{{ listing.name|truncatechars:20 }}</td>
+            <td>
+                {% if listing.time_left_seconds > 0 %}
+                <span class="text-success">Active <i role="button" class="fa fa-exchange" onclick="window.location=`{% url 'listing-status-update' listing.slug %}`"></i></span>
+                {% else %}
+                <span class="text-danger">Closed <i role="button" class="fa fa-exchange" onclick="window.location=`{% url 'listing-status-update' listing.slug %}`"></i></span>
+                {% endif %}
+            </td>
+            <td class="text-primary" role="button" onclick="window.location=`{% url 'auctioneer-listing-bids' listing.slug %}`">{{ listing.bids.all.count }}</td>
+            <td onclick="window.location=`{% url 'update-listing' listing.slug %}`" role="button" class="text-right"><i class="fa fa-edit text-center"></i></td>
+        </tr>
+        {% if forloop.last %}
+            <tr>
+                <td colspan="5" class="text-center text-primary fw-bold" role="button" onclick="window.location=`{% url 'auctioneer-listings' %}`">All listings!</td>
+            </tr>
+        {% endif %}
+        {% empty %}
+        <tr>
+        <td colspan="5" class="text-center text-primary fw-bold">You haven't created any listings yet! <a class="text-decoration-underline" href="{% url 'create-listing' %}">Create Now!</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

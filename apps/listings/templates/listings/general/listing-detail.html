@@ -88,7 +88,7 @@
                     <a href="{{ listing.get_absolute_url }}">
                     <div class=" p-2 auction border border-outline-1">
                       <div class="auction-photo text-center mb-3">
-                        <img src="{{ listing.imageURL }}" alt="auction-1" class="img-fluid">
+                        <img style="max-height: 181px; width: 100%; object-fit: cover;" src="{{ listing.imageURL }}" alt="auction-1" class="img-fluid">
                       </div>
                       <div class="auction-details">
                         <p class="text-start fs-5">{{ listing.name }}</p>

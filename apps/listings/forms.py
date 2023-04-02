@@ -1,6 +1,7 @@
 from django import forms
 from django.utils import timezone
 from .models import Category, Listing
+from apps.accounts.models import User
 from zoneinfo import ZoneInfo
 
 category_choices = list(Category.objects.values_list("name", "name"))
@@ -41,7 +42,7 @@ class CreateListingForm(forms.ModelForm):
         widget=forms.FileInput(
             attrs={
                 "class": "form-control",
-                "placeholder": "Input The Product Name",
+                "placeholder": "Input The Product Image",
             }
         )
     )
@@ -83,3 +84,25 @@ class CreateListingForm(forms.ModelForm):
     class Meta:
         model = Listing
         exclude = ["auctioneer", "slug", "active"]
+
+
+class UpdateProfileForm(forms.ModelForm):
+    first_name = forms.CharField(
+        max_length=25, widget=forms.TextInput({"class": "form-control"})
+    )
+    last_name = forms.CharField(
+        max_length=25, widget=forms.TextInput({"class": "form-control"})
+    )
+    avatar = forms.ImageField(
+        required=False,
+        widget=forms.FileInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Change your avatar",
+            }
+        ),
+    )
+
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "avatar"]

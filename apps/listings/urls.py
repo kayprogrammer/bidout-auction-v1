@@ -25,4 +25,24 @@ urlpatterns = [
         views.CreateListingView.as_view(),
         name="create-listing",
     ),
+    path(
+        "listings/<slug:listing_slug>/status/update/",
+        views.UpdateListingStatus.as_view(),
+        name="listing-status-update",
+    ),
+    path(
+        "dashboard/listings/",
+        views.AuctioneerListingsView.as_view(),
+        name="auctioneer-listings",
+    ),
+    path(
+        "dashboard/listings/<slug:listing_slug>/bids/",
+        views.AuctioneerListingBidsView.as_view(),
+        name="auctioneer-listing-bids",
+    ),
+    path(
+        "dashboard/listings/<slug:listing_slug>/update/",
+        views.UpdateListingView.as_view(),
+        name="update-listing",
+    ),
 ]

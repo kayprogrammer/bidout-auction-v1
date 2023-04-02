@@ -13,7 +13,7 @@
     <div class="container-fluid bg-danger py-5 text-white">
         <div class="row pt-5">
             <div class="col-12 col-lg-10">
-                <h1 class="display-5 fw-bold ms-0 ps-0 ms-md-5 ps-md-5 pt-3">Create a Listing</h1>
+                <h1 class="display-5 fw-bold ms-0 ps-0 ms-md-5 ps-md-5 pt-3">{% if listing %}Update{% else %}Create{% endif %} a Listing </h1>
             </div>
         </div>
     </div>
@@ -85,12 +85,13 @@
 {% block js %}
     <script>
       $(document).ready(function(){
-          elem = document.getElementById("id_closing_date")
-          var date = new Date()
-          date.setSeconds(0,0)
-          var iso = date.toISOString();
-          var minDate = iso.substring(0,iso.length-1);
-          elem.min = minDate
+        // Disable dates before the current date
+        elem = document.getElementById("id_closing_date")
+        var date = new Date()
+        date.setSeconds(0,0)
+        var iso = date.toISOString();
+        var minDate = iso.substring(0,iso.length-1);
+        elem.min = minDate
       });
     </script>
 {% endblock %}
