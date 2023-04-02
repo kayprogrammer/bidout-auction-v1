@@ -72,7 +72,7 @@
                 </div>
 
                 <div class="col-12 mt-5 text-center">
-                  <button type="submit" class="btn btn-lg btn-success btn-primary">Create Listing</button>
+                  <button type="submit" class="btn btn-lg btn-success btn-primary">{% if listing %}Update{% else %}Create{% endif %} Listing</button>
                 </div>
 
 
@@ -89,7 +89,7 @@
         elem = document.getElementById("id_closing_date")
         var date = new Date()
         date.setSeconds(0,0)
-        var iso = date.toISOString();
+        var iso = date.toLocaleString('sv').slice(0,-3).replace(' ','T');
         var minDate = iso.substring(0,iso.length-1);
         elem.min = minDate
       });

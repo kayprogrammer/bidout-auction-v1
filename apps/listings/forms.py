@@ -51,8 +51,8 @@ class CreateListingForm(forms.ModelForm):
             attrs={
                 "type": "datetime-local",
                 "class": "form-control",
-                "data-target": "#datetimepicker",
                 "placeholder": "Enter a closing date",
+                "step": "any",
             }
         )
     )

@@ -1,8 +1,10 @@
+{% load humanize %}
 <table class="table">
     <thead class="thead-light">
         <tr>
         <th scope="col">S/N</th>
         <th scope="col">Product</th>
+        <th scope="col">Price</th>
         <th scope="col">Status</th>
         <th scope="col">Bids</th>
         <th scope="col">Update</th>
@@ -13,6 +15,7 @@
         <tr>
             <th class="text-primary" scope="row" role="button" onclick="window.location=`{{ listing.get_absolute_url }}`">{{ forloop.counter }}</th>
             <td>{{ listing.name|truncatechars:20 }}</td>
+            <td>{{ listing.price|floatformat:2|intcomma }}</td>
             <td>
                 {% if listing.time_left_seconds > 0 %}
                 <span class="text-success">Active <i role="button" class="fa fa-exchange" onclick="window.location=`{% url 'listing-status-update' listing.slug %}`"></i></span>
@@ -21,7 +24,7 @@
                 {% endif %}
             </td>
             <td class="text-primary" role="button" onclick="window.location=`{% url 'auctioneer-listing-bids' listing.slug %}`">{{ listing.bids.all.count }}</td>
-            <td onclick="window.location=`{% url 'update-listing' listing.slug %}`" role="button" class="text-right"><i class="fa fa-edit text-center"></i></td>
+            <td onclick="window.location=`{% url 'update-listing' listing.slug %}`" role="button" class="text-right"><i class="fa fa-edit text-center fw-bold"></i></td>
         </tr>
         {% if forloop.last %}
             <tr>
