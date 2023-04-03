@@ -48,7 +48,7 @@
                             {% endif %}
                           >Place bid</button>
                           {% if user == listing.auctioneer %}
-                            <button type="submit" class="btn btn-danger mb-3 px-3">Close Auction</button>                            
+                            <button type="button" onclick="window.location=`{% url 'listing-status-update' listing.slug %}`" class="btn btn-danger mb-3 px-3">Close Auction</button>                            
                           {% endif %}
                         {% endif %}
                       </div>

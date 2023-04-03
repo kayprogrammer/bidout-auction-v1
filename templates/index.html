@@ -76,19 +76,20 @@
               <a class="nav-link" href="{% url 'create-listing' %}">Create Listing</a>
             </li>
             <li class="nav-item mx-2" style="display: flex; align-items: center;">
-              <a class="nav-link fa fa-sign-out" href="{% url 'logout' %}"></a>
+              <a class="nav-link fa fa-sign-out" href="{% url 'logout' %}?next={{request.path}}"></a>
             </li>
           {% endif %}
 
 
         </ul>
-
+        {% if user.is_authenticated %}
         <div class="top-control d-flex text-danger">
           <a href="{% url 'dashboard' %}">
 
             <button class="btn btn-md btn-danger my-3 mt-md-0">My Dashboard</button>
           </a>
         </div>
+        {% endif %}
 
       </div>
     </div>
@@ -185,6 +186,15 @@
             var path = window.location.pathname
             if (path === '/watch-list/') {
               btn.parent().parent().parent().parent().parent().remove()
+              if (response?.left < 1){
+                $('.watch-list-row').html(
+                  `
+                  <p style="color: blue; font-weight: bold; font-size: 30px;">
+                    You don't have any favourite active listings here yet!
+                  </p>
+                  `
+                )
+              }
             } else {
               if (action === "remove") {
                 btn.attr('data-action', 'add')
@@ -215,6 +225,7 @@
         dataType: 'json',
         success: function (response) {
           if (response?.status === 'success') {
+          err_container.remove()
             input.blur();
             if (response?.page === 'detail'){
               err_container.children().remove()

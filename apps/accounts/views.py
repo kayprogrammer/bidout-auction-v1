@@ -105,7 +105,9 @@ class ResendActivationEmail(LogoutRequiredMixin, View):
 
 class LoginView(LogoutRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        return render(request, "accounts/login.html")
+        return render(
+            request, "accounts/login.html", {"next": request.GET.get("next", "/")}
+        )
 
     def post(self, request, *args, **kwargs):
         email = request.POST.get("email")
@@ -135,12 +137,17 @@ class LoginView(LogoutRequiredMixin, View):
         existing_watchlists.delete()
 
         login(request, user)
-        return redirect("/")
+        next_url = request.POST.get("next", "/")
+        print(next_url)
+        return redirect(next_url)
 
 
 class LogoutView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         logout(request)
+        next_url = request.GET.get("next")
+        if next_url:
+            return redirect(f"/accounts/login/?next={next_url}")
         return redirect(reverse("login"))
 
 

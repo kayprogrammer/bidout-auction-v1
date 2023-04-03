@@ -2,7 +2,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("dashboard/", views.DashboardView.as_view(), name="dashboard"),
     path("listings/", views.AllAuctionsView.as_view(), name="listings"),
     path(
         "listings/<slug:listing_slug>/",
@@ -30,6 +29,9 @@ urlpatterns = [
         views.UpdateListingStatus.as_view(),
         name="listing-status-update",
     ),
+    
+    # Dashboard Urls
+    path("dashboard/", views.DashboardView.as_view(), name="dashboard"),
     path(
         "dashboard/listings/",
         views.AuctioneerListingsView.as_view(),

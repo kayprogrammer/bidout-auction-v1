@@ -75,8 +75,7 @@ class WatchListView(View):
     def get(self, request):
         user = request.user
         listings = WatchList.objects.filter(
-            Q(user_id=user.pk, session_key=None)
-            | Q(user=None, session_key=user)
+            Q(user_id=user.pk, session_key=None) | Q(user=None, session_key=user)
         ).select_related("user", "listing")
         context = {"listings": listings}
         return render(request, "listings/general/watchlist.html", context)
@@ -96,12 +95,14 @@ class WatchListView(View):
         data = json.loads(request.body)
         user = request.user
         listing_slug = data.get("listing_slug")
-        watch_list = WatchList.objects.filter(
-            Q(user_id=user.pk, session_key=None)
-            | Q(user=None, session_key=user)
-        ).filter(listing__slug=listing_slug)
+        user_watch_list = WatchList.objects.filter(
+            Q(user_id=user.pk, session_key=None) | Q(user=None, session_key=user)
+        )
+
+        left = user_watch_list.count()
+        watch_list = user_watch_list.filter(listing__slug=listing_slug)
         watch_list.delete()
-        return JsonResponse({"success": True})
+        return JsonResponse({"success": True, "left": left - 1})
 
 
 class PlaceBidView(LoginRequiredMixin, View):
@@ -125,9 +126,7 @@ class PlaceBidView(LoginRequiredMixin, View):
                     "message"
                 ] = "Bid amount cannot be less than the bidding price!"
             elif amount <= listing.get_highest_bid:
-                response[
-                    "message"
-                ] = "Bid amount must be more than the highest bid!"
+                response["message"] = "Bid amount must be more than the highest bid!"
             else:
                 bid, created = Bid.objects.get_or_create(
                     user=request.user, listing=listing
@@ -147,9 +146,7 @@ class CreateListingView(LoginRequiredMixin, View):
         form = CreateListingForm()
         categories = Category.objects.all()
         context = {"form": form, "categories": categories}
-        return render(
-            request, "listings/dashboard/create-listing.html", context
-        )
+        return render(request, "listings/dashboard/create-listing.html", context)
 
     def post(self, request):
         categories = Category.objects.all()
@@ -164,23 +161,32 @@ class CreateListingView(LoginRequiredMixin, View):
         return render(request, "listings/create-listing.html", context)
 
 
+# ################
+# DASHBOARD VIEWS
+# ################
 class DashboardView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
-        listings = Listing.objects.filter(auctioneer=user).select_related(
-            "auctioneer", "category"
-        )[:10]
-        form = UpdateProfileForm(instance=user)
-        context = {"listings": listings, "form": form}
+        context = {}
+        page = request.GET.get("page")
+        if page and page == "profile":
+            form = UpdateProfileForm(instance=user)
+            context["form"] = form
+            context["profile"] = True
+        else:
+            listings = Listing.objects.filter(auctioneer=user).select_related(
+                "auctioneer", "category"
+            )[:10]
+            context["listings"] = listings
         return render(request, "listings/dashboard/main.html", context)
 
-    def put(self, request):
+    def post(self, request):
         user = request.user
         form = UpdateProfileForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()
             messages.success(request, "Profile updated successfully")
-        return redirect(reverse("dashboard"))
+        return redirect("/dashboard/?page=profile")
 
 
 class AuctioneerListingsView(LoginRequiredMixin, View):
@@ -231,9 +237,7 @@ class UpdateListingView(LoginRequiredMixin, View):
         )
         categories = Category.objects.all()
         context = {"listing": listing, "form": form, "categories": categories}
-        return render(
-            request, "listings/dashboard/create-listing.html", context
-        )
+        return render(request, "listings/dashboard/create-listing.html", context)
 
     def post(self, request, *args, **kwargs):
         # Could have used a put method but html form only accepts get or post
@@ -247,9 +251,7 @@ class UpdateListingView(LoginRequiredMixin, View):
             form.save()
             messages.success(request, "Listing updated successfully")
             return redirect(
-                reverse(
-                    "update-listing", kwargs={"listing_slug": listing.slug}
-                )
+                reverse("update-listing", kwargs={"listing_slug": listing.slug})
             )
         context = {"form": form, "categories": categories}
         return render(request, "listings/dashboard/create-listing.html", context)

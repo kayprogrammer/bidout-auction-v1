@@ -21,6 +21,7 @@
                     <div class="form-body">
                         <form method="POST" class="">
                           {% csrf_token %}
+                          <input type="hidden" name="next" value="{{ next }}" />
                            <div class="vstack gap-3 m-0 p-0">
                             <div class="">
                                 <span>
