@@ -1,0 +1,54 @@
+version: "3.8"
+
+# For testing if project is alive on http (port 80) only!!! (without traefic)
+#
+# docker-compose -f docker-compose.debug.yml up -d
+#
+# It should be available on HOST_NAME adress, for example
+# 1. http://localhost
+# 2. http://example.com
+# Depend on using it with your machine or VM
+
+services:
+  postgres-db:
+    restart: always
+    image: postgres:13-alpine
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  web:
+    restart: always
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - .:/build
+    ports:
+      - "8000:8000"
+    environment:
+      - PG_HOST=postgres-db
+    env_file:
+      - .env
+    depends_on:
+      - postgres-db
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=pgadmin4@pgadmin.org
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres-db

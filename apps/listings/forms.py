@@ -4,10 +4,12 @@ from .models import Category, Listing
 from apps.accounts.models import User
 from zoneinfo import ZoneInfo
 
-category_choices = list(Category.objects.values_list("name", "name"))
-category_choices.insert(0, ("", "Choose a Category"))
-category_choices.append(("Other", "Other"))
-
+try:
+    category_choices = list(Category.objects.values_list("name", "name"))
+    category_choices.insert(0, ("", "Choose a Category"))
+    category_choices.append(("Other", "Other"))
+except:
+    category_choices = []
 
 class CreateListingForm(forms.ModelForm):
     name = forms.CharField(

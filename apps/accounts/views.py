@@ -138,7 +138,6 @@ class LoginView(LogoutRequiredMixin, View):
 
         login(request, user)
         next_url = request.POST.get("next", "/")
-        print(next_url)
         return redirect(next_url)
 
 

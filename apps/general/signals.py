@@ -12,7 +12,7 @@ custom_signal4 = Signal()
 User = get_user_model()
 
 
-@receiver(post_migrate, dispatch_uid="1")
+@receiver(post_migrate)
 def create_site_detail(sender, **kwargs):
     site_detail = SiteDetail.objects.all()
     if not site_detail.exists():
