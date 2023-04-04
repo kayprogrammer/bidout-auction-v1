@@ -3,6 +3,11 @@
 ![alt text](https://github.com/kayprogrammer/bidout-auction-v1/blob/main/display.png?raw=true)
 
 
+#### Django Docs: [Documentation](https://docs.djangoproject.com/en/4.2/)
+
+#### PG ADMIN: [pgadmin.org](https://www.pgadmin.org) 
+
+
 ## How to run locally
 
 * Download this repo or run: 
@@ -15,9 +20,7 @@
 ```bash
     $ pip install -r requirements.txt
 ```
-- Create an .env file and copy the contents from the .env.example to the file and set the respective values.
-
-- Create a postgres database with PG ADMIN or psql and add the values to the .env file.
+- Create an `.env` file and copy the contents from the `.env.example` to the file and set the respective values. A postgres database can be created with PG ADMIN or psql
 
 - Run Locally
 ```bash
