@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Let the DB start
-python backend_pre_start.py
+python init_db.py
 
 until pg_isready -h postgres-db -U postgres; do
   echo "Waiting for the database to be ready..."

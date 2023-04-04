@@ -16,15 +16,3 @@ down:
 
 show-logs:
 	docker-compose logs
-
-migrate:
-	docker compose exec web python3.11 manage.py migrate
-
-makemigrations:
-	docker compose exec web python3.11 manage.py makemigrations
-
-superuser:
-	docker compose exec web python3.11 manage.py createsuperuser
-
-collectstatic:
-	docker compose exec web python3.11 manage.py collectstatic --no-input --clear
