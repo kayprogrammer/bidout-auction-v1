@@ -11,6 +11,7 @@ try:
 except:
     category_choices = []
 
+
 class CreateListingForm(forms.ModelForm):
     name = forms.CharField(
         max_length=70,

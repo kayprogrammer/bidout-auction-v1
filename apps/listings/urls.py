@@ -29,7 +29,6 @@ urlpatterns = [
         views.UpdateListingStatus.as_view(),
         name="listing-status-update",
     ),
-    
     # Dashboard Urls
     path("dashboard/", views.DashboardView.as_view(), name="dashboard"),
     path(

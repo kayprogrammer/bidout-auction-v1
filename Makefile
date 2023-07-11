@@ -16,3 +16,38 @@ down:
 
 show-logs:
 	docker-compose logs
+
+serv:
+	python manage.py runserver
+
+mmig: # run with "make mmig" or "make mmig app='app'"
+	if [ -z "$(app)" ]; then \
+		python manage.py makemigrations; \
+	else \
+		python manage.py makemigrations "$(app)"; \
+	fi
+
+mig: # run with "make mig" or "make mig app='app'"
+	if [ -z "$(app)" ]; then \
+		python manage.py migrate; \
+	else \
+		python manage.py migrate "$(app)"; \
+	fi
+
+test:
+	pytest --disable-warnings -vv -x
+
+shell:
+	python manage.py shell
+
+suser:
+	python manage.py createsuperuser
+
+cpass:
+	python manage.py changepassword
+	
+requirements: # Install requirements
+	pip install -r requirements.txt
+
+urequirements: # Update requirements
+	pip freeze > requirements.txt
