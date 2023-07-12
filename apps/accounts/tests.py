@@ -1,7 +1,12 @@
+import uuid
 from django.test import TestCase
 from django.conf import settings
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+
 from apps.accounts.forms import CustomUserCreationForm
 from apps.accounts.models import Timezone
+from apps.accounts.senders import email_verification_generate_token
 
 from apps.common.utils import TestUtil
 from unittest import mock
@@ -55,42 +60,41 @@ class TestAccounts(TestCase):
         self.assertIsNone(response.context.get("form"))
 
         # Verify that a user with the same email cannot be registered again
-        mock.patch("apps.accounts.emails.Util", new="")
+        mock.patch("apps.accounts.senders.Util", new="")
         response = self.client.post(self.register_url, user_in)
         self.assertIsNotNone(response.context.get("form").errors)
 
-    # def test_verify_email(self):
-    #     new_user = self.new_user
-    #     otp = "111111"
-    #     # Verify that the email verification fails with an invalid otp
-    #     response = self.client.post(
-    #         self.verify_email_url, {"email": new_user.email, "otp": otp}
-    #     )
-    #     self.assertEqual(response.status_code, 404)
-    #     self.assertEqual(
-    #         response.json(), {"status": "failure", "message": "Incorrect Otp"}
-    #     )
+    def test_verify_email(self):
+        new_user = self.new_user
+        uid = urlsafe_base64_encode(force_bytes(new_user.id))
+        token = email_verification_generate_token.make_token(new_user)
 
-    #     # Verify that the email verification succeeds with a valid otp
-    #     otp = Otp.objects.create(user_id=new_user.id, code=otp)
-    #     mock.patch("apps.accounts.emails.Util", new="")
-    #     response = self.client.post(
-    #         self.verify_email_url,
-    #         {"email": new_user.email, "otp": otp.code},
-    #     )
-    #     print(response.json())
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(
-    #         response.json(),
-    #         {"status": "success", "message": "Account verification successful"},
-    #     )
+        # Verify that the email verification fails with an invalid link
+        fake_uid = urlsafe_base64_encode(force_bytes(uuid.uuid4()))
+        response = self.client.get(
+            f"{self.verify_email_url}{fake_uid}/{token}/{new_user.id}/"
+        )
+        self.assertTemplateUsed(response, "accounts/email-activation-failed.html")
+
+        # Verify that the email verification succeeds with a valid link
+        mock.patch("apps.accounts.senders.Util", new="")
+        response = self.client.get(
+            f"{self.verify_email_url}{uid}/{token}/{new_user.id}/"
+        )
+        self.assertRedirects(
+            response,
+            "/accounts/login/",
+            status_code=302,
+            target_status_code=200,
+            fetch_redirect_response=True,
+        )
 
     # def test_resend_verification_email(self):
     #     new_user = self.new_user
     #     user_in = {"email": new_user.email}
 
     #     # Verify that an unverified user can get a new email
-    #     mock.patch("apps.accounts.emails.Util", new="")
+    #     mock.patch("apps.accounts.senders.Util", new="")
     #     # Then, attempt to resend the verification email
     #     response = self.client.post(self.resend_verification_email_url, user_in)
     #     self.assertEqual(response.status_code, 200)
@@ -101,7 +105,7 @@ class TestAccounts(TestCase):
     #     # Verify that a verified user cannot get a new email
     #     new_user.is_email_verified = True
     #     new_user.save()
-    #     mock.patch("apps.accounts.emails.Util", new="")
+    #     mock.patch("apps.accounts.senders.Util", new="")
     #     response = self.client.post(
     #         self.resend_verification_email_url,
     #         {"email": new_user.email},
@@ -112,7 +116,7 @@ class TestAccounts(TestCase):
     #     )
 
     #     # Verify that an error is raised when attempting to resend the verification email for a user that doesn't exist
-    #     mock.patch("apps.accounts.emails.Util", new="")
+    #     mock.patch("apps.accounts.senders.Util", new="")
     #     response = self.client.post(
     #         self.resend_verification_email_url,
     #         {"email": "invalid@example.com"},
@@ -212,7 +216,7 @@ class TestAccounts(TestCase):
     #     password = "testverifieduser123"
     #     user_dict = {"email": email, "password": password}
 
-    #     mock.patch("apps.accounts.emails.Util", new="")
+    #     mock.patch("apps.accounts.senders.Util", new="")
     #     # Then, attempt to get password reset token
     #     response = self.client.post(self.send_password_reset_otp_url, user_dict)
     #     self.assertEqual(response.status_code, 200)
@@ -222,7 +226,7 @@ class TestAccounts(TestCase):
     #     )
 
     #     # Verify that an error is raised when attempting to get password reset token for a user that doesn't exist
-    #     mock.patch("apps.accounts.emails.Util", new="")
+    #     mock.patch("apps.accounts.senders.Util", new="")
     #     response = self.client.post(
     #         self.send_password_reset_otp_url,
     #         {"email": "invalid@example.com"},
@@ -271,7 +275,7 @@ class TestAccounts(TestCase):
     #     # Verify that password reset succeeds
     #     Otp.objects.create(user_id=verified_user.id, code=otp)
     #     password_reset_data["otp"] = otp
-    #     mock.patch("apps.accounts.emails.Util", new="")
+    #     mock.patch("apps.accounts.senders.Util", new="")
     #     response = self.client.post(
     #         self.set_new_password_url,
     #         password_reset_data,
