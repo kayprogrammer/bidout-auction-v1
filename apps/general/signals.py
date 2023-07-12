@@ -2,6 +2,7 @@ from django.db.models.signals import post_migrate
 from django.contrib.auth.hashers import make_password
 from django.dispatch import Signal, receiver
 from django.contrib.auth import get_user_model
+from django.conf import settings
 from .models import SiteDetail, Review
 
 custom_signal1 = Signal()
@@ -14,17 +15,18 @@ User = get_user_model()
 
 @receiver(post_migrate)
 def create_site_detail(sender, **kwargs):
-    site_detail = SiteDetail.objects.all()
-    if not site_detail.exists():
-        print("#########################")
-        print("#-CREATING-SITE-DETAILS-#")
-        print("#########################")
-        print("  ---------------------  ")
-        site_detail = SiteDetail.objects.create()
-        print("########################")
-        print("#-SITE-DETAILS-CREATED-#")
-        print("########################\n")
-    custom_signal1.send(sender=sender)
+    if not settings.TESTING:
+        site_detail = SiteDetail.objects.all()
+        if not site_detail.exists():
+            print("#########################")
+            print("#-CREATING-SITE-DETAILS-#")
+            print("#########################")
+            print("  ---------------------  ")
+            site_detail = SiteDetail.objects.create()
+            print("########################")
+            print("#-SITE-DETAILS-CREATED-#")
+            print("########################\n")
+        custom_signal1.send(sender=sender)
 
 
 @receiver(custom_signal1)

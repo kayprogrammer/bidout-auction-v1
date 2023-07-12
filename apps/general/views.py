@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib import messages
 from apps.listings.models import Listing
-from .models import Review, Suscriber
+from .models import Review, Subscriber
 
 
 class HomeView(View):
@@ -13,9 +13,10 @@ class HomeView(View):
         return render(request, "general/main.html", context)
 
 
-class SuscriberView(View):
+class SubscriberView(View):
     def post(self, request, *args, **kwargs):
         email = request.POST.get("email")
-        Suscriber.objects.get_or_create(email=email)
-        messages.success(request, "Suscribed successfully")
-        return redirect(request.META.get("HTTP_REFERER"))
+        Subscriber.objects.get_or_create(email=email)
+        messages.success(request, "Subscribed successfully")
+        redirect_url = request.META.get("HTTP_REFERER") or "/"
+        return redirect(redirect_url)

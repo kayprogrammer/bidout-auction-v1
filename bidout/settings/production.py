@@ -1,5 +1,7 @@
 from .base import *
 
+DEBUG = False
+
 DATABASES = {
     "default": {
         "ENGINE": config("POSTGRES_ENGINE"),

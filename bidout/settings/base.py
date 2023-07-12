@@ -1,9 +1,6 @@
 from pathlib import Path
 import os
 from decouple import config
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
 
 import logging
 import logging.config
@@ -19,9 +16,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config("SECRET_KEY")
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG")
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS").split(" ")
 
@@ -93,11 +87,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "bidout.wsgi.application"
-
-
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -274,7 +263,7 @@ JAZZMIN_SETTINGS = {
         "accounts.user": "fas fa-user-cog",
         "accounts.timezone": "fas fa-clock",
         "general.sitedetail": "fas fa-info-circle",
-        "general.suscriber": "fas fa-users",
+        "general.subscriber": "fas fa-users",
         "general.review": "fas fa-thumbs-up",
         "listings.category": "fas fa-list",
         "listings.listing": "fas fa-list-alt",
@@ -296,3 +285,5 @@ JAZZMIN_SETTINGS = {
         "auth.group": "vertical_tabs",
     },
 }
+
+TESTING = False

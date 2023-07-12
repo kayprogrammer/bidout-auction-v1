@@ -33,9 +33,9 @@ class SiteDetailAdmin(admin.ModelAdmin):
         )
 
 
-class SuscriberResource(resources.ModelResource):
+class SubscriberResource(resources.ModelResource):
     class Meta:
-        model = Suscriber
+        model = Subscriber
         fields = ("email",)
 
     def after_export(self, queryset, data, *args, **kwargs):
@@ -43,10 +43,10 @@ class SuscriberResource(resources.ModelResource):
         return queryset
 
 
-class SuscriberAdmin(ExportActionMixin, admin.ModelAdmin):
+class SubscriberAdmin(ExportActionMixin, admin.ModelAdmin):
     list_display = ["email", "exported", "created_at"]
     list_filter = ["email", "exported", "created_at"]
-    resource_class = SuscriberResource
+    resource_class = SubscriberResource
 
 
 class ReviewAdmin(admin.ModelAdmin):
@@ -55,5 +55,5 @@ class ReviewAdmin(admin.ModelAdmin):
 
 
 admin.site.register(SiteDetail, SiteDetailAdmin)
-admin.site.register(Suscriber, SuscriberAdmin)
+admin.site.register(Subscriber, SubscriberAdmin)
 admin.site.register(Review, ReviewAdmin)

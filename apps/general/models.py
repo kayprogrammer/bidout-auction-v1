@@ -40,7 +40,7 @@ class SiteDetail(TimeStampedUUIDModel):
         verbose_name_plural = "Site details"
 
 
-class Suscriber(TimeStampedUUIDModel):
+class Subscriber(TimeStampedUUIDModel):
     email = models.EmailField(null=True)
     exported = models.BooleanField(default=False)
 

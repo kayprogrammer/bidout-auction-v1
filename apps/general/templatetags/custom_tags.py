@@ -6,5 +6,5 @@ register = template.Library()
 
 @register.inclusion_tag("footer.html", takes_context=True)
 def footer(context):
-    site = SiteDetail.objects.get()
+    site, created = SiteDetail.objects.get_or_create()
     return {"site": site}

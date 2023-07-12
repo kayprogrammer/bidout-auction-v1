@@ -6,7 +6,7 @@
         <div class="access">
           <h4 class="mb-3">Join Newsletter</h4>
           <p class="mb-4">Subscribe our newsletter to get more free design course and resource.</p>
-          <form method="POST" action="{% url 'suscribe' %}">
+          <form method="POST" action="{% url 'subscribe' %}">
             {% csrf_token %}
             <input type="text" name="email" class="form-control" placeholder="your email">
             <button class="btn btn-danger btn-md mt-3" type="submit">Submit</button>
