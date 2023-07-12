@@ -120,88 +120,51 @@ class TestAccounts(TestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(messages[0].message, "Email address already verified!")
 
-    # def test_login(self):
-    #     new_user = self.new_user
+    def test_login_get(self):
+        response = self.client.get(self.login_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "accounts/login.html")
 
-    #     # Test for invalid credentials
-    #     response = self.client.post(
-    #         self.login_url,
-    #         {"email": "invalid@email.com", "password": "invalidpassword"},
-    #     )
-    #     self.assertEqual(response.status_code, 401)
-    #     self.assertEqual(
-    #         response.json(), {"status": "failure", "message": "Invalid credentials"}
-    #     )
+    def test_login_post(self):
+        new_user = self.new_user
 
-    #     # Test for unverified credentials (email)
-    #     response = self.client.post(
-    #         self.login_url,
-    #         {"email": new_user.email, "password": "testpassword"},
-    #     )
-    #     self.assertEqual(response.status_code, 401)
-    #     self.assertEqual(
-    #         response.json(), {"status": "failure", "message": "Verify your email first"}
-    #     )
+        # Test for invalid credentials
+        response = self.client.post(
+            self.login_url,
+            {"email": "invalid@email.com", "password": "invalidpassword"},
+        )
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(messages[0].message, "Invalid credentials!")
+        self.assertRedirects(
+            response,
+            "/accounts/login/",
+            status_code=302,
+            target_status_code=200,
+            fetch_redirect_response=True,
+        )
 
-    #     # Test for valid credentials and verified email address
-    #     new_user.is_email_verified = True
-    #     new_user.save()
-    #     response = self.client.post(
-    #         self.login_url,
-    #         {"email": new_user.email, "password": "testpassword"},
-    #     )
-    #     self.assertEqual(response.status_code, 201)
-    #     self.assertEqual(
-    #         response.json(),
-    #         {
-    #             "status": "success",
-    #             "message": "Login successful",
-    #             "data": {"access": mock.ANY, "refresh": mock.ANY},
-    #         },
-    #     )
+        # Test for unverified credentials (email)
+        mock.patch("apps.accounts.senders.Util", new="")
+        response = self.client.post(
+            self.login_url,
+            {"email": new_user.email, "password": "testpassword"},
+        )
+        self.assertTemplateUsed(response, "accounts/email-activation-request.html")
 
-    # def test_refresh_token(self):
-    #     verified_user = self.verified_user
-
-    #     jwt_obj = Jwt.objects.create(
-    #         user_id=verified_user.id,
-    #         access="access",
-    #         refresh="refresh",
-    #     )
-
-    #     # Test for invalid refresh token (not found)
-    #     response = self.client.post(
-    #         self.refresh_url, {"refresh": "invalid_refresh_token"}
-    #     )
-    #     self.assertEqual(response.status_code, 404)
-    #     self.assertEqual(
-    #         response.json(),
-    #         {"status": "failure", "message": "Refresh token does not exist"},
-    #     )
-
-    #     # Test for invalid refresh token (invalid or expired)
-    #     response = self.client.post(self.refresh_url, {"refresh": jwt_obj.refresh})
-    #     self.assertEqual(response.status_code, 401)
-    #     self.assertEqual(
-    #         response.json(),
-    #         {"status": "failure", "message": "Refresh token is invalid or expired"},
-    #     )
-
-    #     # Test for valid refresh token
-    #     refresh = Authentication.create_refresh_token()
-    #     jwt_obj.refresh = refresh
-    #     jwt_obj.save()
-    #     mock.patch("apps.accounts.auth.Authentication.decode_jwt", return_value=True)
-    #     response = self.client.post(self.refresh_url, {"refresh": jwt_obj.refresh})
-    #     self.assertEqual(response.status_code, 201)
-    #     self.assertEqual(
-    #         response.json(),
-    #         {
-    #             "status": "success",
-    #             "message": "Tokens refresh successful",
-    #             "data": {"access": mock.ANY, "refresh": mock.ANY},
-    #         },
-    #     )
+        # Test for valid credentials and verified email address
+        new_user.is_email_verified = True
+        new_user.save()
+        response = self.client.post(
+            self.login_url,
+            {"email": new_user.email, "password": "testpassword"},
+        )
+        self.assertRedirects(
+            response,
+            "/",
+            status_code=302,
+            target_status_code=200,
+            fetch_redirect_response=True,
+        )
 
     # def test_get_password_otp(self):
     #     verified_user = self.verified_user

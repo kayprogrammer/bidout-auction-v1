@@ -13,7 +13,7 @@ class TestUtil:
             "email": "test@example.com",
             "password": "testpassword",
         }
-        user = User.objects.create(**user_dict)
+        user = User.objects.create_user(**user_dict)
         return user
 
     def verified_user():
@@ -24,7 +24,7 @@ class TestUtil:
             "is_email_verified": True,
             "password": "testpassword",
         }
-        user = User.objects.create(**user_dict)
+        user = User.objects.create_user(**user_dict)
         return user
 
     def another_verified_user():
@@ -35,7 +35,7 @@ class TestUtil:
             "is_email_verified": True,
             "password": "anothertestverifieduser123",
         }
-        user = User.objects.create(**create_user_dict)
+        user = User.objects.create_user(**create_user_dict)
         return user
 
     def create_listing(verified_user):

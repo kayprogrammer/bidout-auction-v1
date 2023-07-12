@@ -113,8 +113,9 @@ class LoginView(LogoutRequiredMixin, View):
         email = request.POST.get("email")
         password = request.POST.get("password")
         user = authenticate(request, username=email, password=password)
+
         if not user:
-            messages.error(request, "Invalid credentials")
+            messages.error(request, "Invalid credentials!")
             return redirect("/accounts/login/")
 
         if not user.is_email_verified:
