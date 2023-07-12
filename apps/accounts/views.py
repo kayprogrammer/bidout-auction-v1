@@ -90,7 +90,7 @@ class ResendActivationEmail(LogoutRequiredMixin, View):
             return redirect(reverse("login"))
         user = user.first()
         if user.is_email_verified:
-            messages.info(request, "Email address already verified")
+            messages.info(request, "Email address already verified!")
             request.session["activation_email"] = None
             return redirect(reverse("login"))
 

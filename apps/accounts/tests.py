@@ -1,8 +1,9 @@
-import uuid
 from django.test import TestCase
 from django.conf import settings
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
+from django.contrib.messages import get_messages
+from django.http.cookie import SimpleCookie
 
 from apps.accounts.forms import CustomUserCreationForm
 from apps.accounts.models import Timezone
@@ -10,6 +11,7 @@ from apps.accounts.senders import email_verification_generate_token
 
 from apps.common.utils import TestUtil
 from unittest import mock
+import uuid
 
 settings.TESTING = True
 
@@ -89,42 +91,34 @@ class TestAccounts(TestCase):
             fetch_redirect_response=True,
         )
 
-    # def test_resend_verification_email(self):
-    #     new_user = self.new_user
-    #     user_in = {"email": new_user.email}
+    def test_resend_activation_email(self):
+        new_user = self.new_user
 
-    #     # Verify that an unverified user can get a new email
-    #     mock.patch("apps.accounts.senders.Util", new="")
-    #     # Then, attempt to resend the verification email
-    #     response = self.client.post(self.resend_verification_email_url, user_in)
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(
-    #         response.json(), {"status": "success", "message": "Verification email sent"}
-    #     )
+        # Verify that an error is raised when attempting to resend the activation email for a user that doesn't exist
+        self.client.cookies = SimpleCookie({"activation_email": "invalid@email.com"})
+        mock.patch("apps.accounts.senders.Util", new="")
+        response = self.client.get(
+            self.resend_activation_email_url,
+        )
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(messages[0].message, "Not allowed!")
 
-    #     # Verify that a verified user cannot get a new email
-    #     new_user.is_email_verified = True
-    #     new_user.save()
-    #     mock.patch("apps.accounts.senders.Util", new="")
-    #     response = self.client.post(
-    #         self.resend_verification_email_url,
-    #         {"email": new_user.email},
-    #     )
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(
-    #         response.json(), {"status": "success", "message": "Email already verified"}
-    #     )
+        # Verify that an unverified user can get a new email
+        self.client.cookies = SimpleCookie({"activation_email": new_user.email})
+        mock.patch("apps.accounts.senders.Util", new="")
+        # Then, attempt to resend the activation email
+        response = self.client.get(self.resend_activation_email_url)
+        self.assertTemplateUsed(response, "accounts/email-activation-request.html")
 
-    #     # Verify that an error is raised when attempting to resend the verification email for a user that doesn't exist
-    #     mock.patch("apps.accounts.senders.Util", new="")
-    #     response = self.client.post(
-    #         self.resend_verification_email_url,
-    #         {"email": "invalid@example.com"},
-    #     )
-    #     self.assertEqual(response.status_code, 404)
-    #     self.assertEqual(
-    #         response.json(), {"status": "failure", "message": "Incorrect Email"}
-    #     )
+        # Verify that a verified user cannot get a new email
+        new_user.is_email_verified = True
+        new_user.save()
+        mock.patch("apps.accounts.senders.Util", new="")
+        response = self.client.get(
+            self.resend_activation_email_url,
+        )
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(messages[0].message, "Email address already verified!")
 
     # def test_login(self):
     #     new_user = self.new_user
