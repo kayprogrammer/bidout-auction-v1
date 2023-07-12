@@ -1,10 +1,9 @@
 # BidOut Auction V1 (MVT)
 
-![alt text](https://github.com/kayprogrammer/bidout-auction-v1/blob/main/display.png?raw=true)
+![alt text](https://github.com/kayprogrammer/bidout-auction-v1/blob/main/display/django.png?raw=true)
 
 
 #### Django Docs: [Documentation](https://docs.djangoproject.com/en/4.2/)
-
 #### PG ADMIN: [pgadmin.org](https://www.pgadmin.org) 
 
 
@@ -38,3 +37,21 @@ OR
 ```bash
     $ make build
 ```
+
+- Test Coverage
+```bash
+    $ pytest --disable-warnings -vv
+```
+OR
+```bash
+    $ make test
+```
+
+#### CLIENT
+![alt text](https://github.com/kayprogrammer/bidout-auction-v1/blob/main/display/display1.png?raw=true)
+![alt text](https://github.com/kayprogrammer/bidout-auction-v1/blob/main/display/display2.png?raw=true)
+![alt text](https://github.com/kayprogrammer/bidout-auction-v1/blob/main/display/display3.png?raw=true)
+![alt text](https://github.com/kayprogrammer/bidout-auction-v1/blob/main/display/display4.png?raw=true)
+
+#### ADMIN
+![alt text](https://github.com/kayprogrammer/bidout-auction-v1/blob/main/display/admin.png?raw=true)
