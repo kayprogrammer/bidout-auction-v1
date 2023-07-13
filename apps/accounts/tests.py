@@ -27,7 +27,6 @@ class TestAccounts(TestCase):
     reset_password_url = "/accounts/reset-password/"
     reset_password_sent_url = "/accounts/reset-password-sent/"
     reset_password_confirm_url = "/accounts/reset/"
-    set_new_password_url = "/accounts/reset/Nw/set-password/"
     reset_password_complete_url = "/accounts/reset-password-complete/"
 
     login_url = "/accounts/login/"
@@ -39,13 +38,14 @@ class TestAccounts(TestCase):
         verified_user = TestUtil.verified_user()
         self.verified_user = verified_user
 
-    def test_signup_get(self):
+    def test_register(self):
+        # GET #
         response = self.client.get(self.register_url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "accounts/signup.html")
         self.assertTrue(isinstance(response.context["form"], CustomUserCreationForm))
 
-    def test_signup_post(self):
+        # POST #
         email = "testregisteruser@example.com"
         password = "testblablaregistersdsssduserpassword12@"
         user_in = {
@@ -120,12 +120,13 @@ class TestAccounts(TestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(messages[0].message, "Email address already verified!")
 
-    def test_login_get(self):
+    def test_login(self):
+        # GET #
         response = self.client.get(self.login_url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "accounts/login.html")
 
-    def test_login_post(self):
+        # POST #
         new_user = self.new_user
 
         # Test for invalid credentials
@@ -200,23 +201,24 @@ class TestAccounts(TestCase):
 
         # Test the confirmation succeds for valid link
         response = self.client.get(f"{self.reset_password_confirm_url}{uid}/{token}/")
+        set_new_password_url = response.url
         self.assertRedirects(
             response,
-            "/accounts/reset/Nw/set-password/",
+            set_new_password_url,
             status_code=302,
             target_status_code=200,
             fetch_redirect_response=True,
         )
 
         # Test set new password page shows
-        response = self.client.get(self.set_new_password_url)
+        response = self.client.get(set_new_password_url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "accounts/password-reset-form.html")
         self.assertIsInstance(response.context["form"], CustomSetPasswordForm)
 
         # Test password resets successfully
         response = self.client.post(
-            self.set_new_password_url,
+            set_new_password_url,
             {"new_password1": "newpass12@jsjs", "new_password2": "newpass12@jsjs"},
         )
         self.assertRedirects(
@@ -227,100 +229,16 @@ class TestAccounts(TestCase):
             fetch_redirect_response=True,
         )
 
-    # def test_get_password_otp(self):
-    #     verified_user = self.verified_user
-    #     email = verified_user.email
+    def test_logout(self):
+        verified_user = self.verified_user
 
-    #     password = "testverifieduser123"
-    #     user_dict = {"email": email, "password": password}
-
-    #
-    #     # Then, attempt to get password reset token
-    #     response = self.client.post(self.send_password_reset_otp_url, user_dict)
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(
-    #         response.json(),
-    #         {"status": "success", "message": "Password otp sent"},
-    #     )
-
-    #     # Verify that an error is raised when attempting to get password reset token for a user that doesn't exist
-    #
-    #     response = self.client.post(
-    #         self.send_password_reset_otp_url,
-    #         {"email": "invalid@example.com"},
-    #     )
-    #     self.assertEqual(response.status_code, 404)
-    #     self.assertEqual(
-    #         response.json(),
-    #         {"status": "failure", "message": "Incorrect Email"},
-    #     )
-
-    # def test_reset_password(self):
-    #     verified_user = self.verified_user
-    #     password_reset_data = {
-    #         "email": verified_user.email,
-    #         "password": "newtestverifieduserpassword123",
-    #     }
-    #     otp = "111111"
-
-    #     # Verify that the password reset verification fails with an incorrect email
-    #     response = self.client.post(
-    #         self.set_new_password_url,
-    #         {
-    #             "email": "invalidemail@example.com",
-    #             "otp": otp,
-    #             "password": "newpassword",
-    #         },
-    #     )
-    #     self.assertEqual(response.status_code, 404)
-    #     self.assertEqual(
-    #         response.json(),
-    #         {"status": "failure", "message": "Incorrect Email"},
-    #     )
-
-    #     # Verify that the password reset verification fails with an invalid otp
-    #     password_reset_data["otp"] = otp
-    #     response = self.client.post(
-    #         self.set_new_password_url,
-    #         password_reset_data,
-    #     )
-    #     self.assertEqual(response.status_code, 404)
-    #     self.assertEqual(
-    #         response.json(),
-    #         {"status": "failure", "message": "Incorrect Otp"},
-    #     )
-
-    #     # Verify that password reset succeeds
-    #     Otp.objects.create(user_id=verified_user.id, code=otp)
-    #     password_reset_data["otp"] = otp
-    #
-    #     response = self.client.post(
-    #         self.set_new_password_url,
-    #         password_reset_data,
-    #     )
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(
-    #         response.json(),
-    #         {"status": "success", "message": "Password reset successful"},
-    #     )
-
-    # def test_logout(self):
-    #     auth_token = TestUtil.auth_token(self.verified_user)
-
-    #     # Ensures if authorized user logs out successfully
-    #     bearer = {"HTTP_AUTHORIZATION": f"Bearer {auth_token}"}
-    #     response = self.client.get(self.logout_url, **bearer)
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(
-    #         response.json(),
-    #         {"status": "success", "message": "Logout successful"},
-    #     )
-
-    #     # Ensures if unauthorized user cannot log out
-    #     self.bearer = {"HTTP_AUTHORIZATION": f"invalid_token"}
-    #     response = self.client.get(self.logout_url, **self.bearer)
-    #     self.assertEqual(response.status_code, 401)
-    #     self.assertEqual(
-    #         response.json(),
-    #         {"status": "failure", "message": "Auth Token is Invalid or Expired!"},
-    #     )
+        # Ensures A user logs out successfully
+        self.client.login(email=verified_user.email, password="testpassword")
+        response = self.client.get(self.logout_url)
+        self.assertRedirects(
+            response,
+            self.login_url,
+            status_code=302,
+            target_status_code=200,
+            fetch_redirect_response=True,
+        )

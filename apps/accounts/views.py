@@ -138,15 +138,17 @@ class LoginView(LogoutRequiredMixin, View):
         existing_watchlists.delete()
 
         login(request, user)
-        next_url = request.POST.get("next", "/")
-        return redirect(next_url)
+        redirect_url = request.POST.get("next", "/")
+        if redirect_url and redirect_url == "/accounts/logout/":
+            redirect_url = "/"
+        return redirect(redirect_url)
 
 
 class LogoutView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         logout(request)
         next_url = request.GET.get("next")
-        if next_url:
+        if next_url and next_url != "/accounts/logout/":
             return redirect(f"/accounts/login/?next={next_url}")
         return redirect(reverse("login"))
 
