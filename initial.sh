@@ -11,10 +11,8 @@ done
 # Run migrations
 python manage.py migrate --no-input
 
-# run tests
-# python -m pytest tests
-
-
+run tests
+pytest --disable-warnings -vv -x
 
 
 # starts application

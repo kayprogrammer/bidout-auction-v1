@@ -101,8 +101,10 @@ class WatchListView(View):
 
         left = user_watch_list.count()
         watch_list = user_watch_list.filter(listing__slug=listing_slug)
-        watch_list.delete()
-        return JsonResponse({"success": True, "left": left - 1})
+        if watch_list.exists():
+            watch_list.delete()
+            left = left - 1
+        return JsonResponse({"success": True, "left": left})
 
 
 class PlaceBidView(LoginRequiredMixin, View):
@@ -156,9 +158,9 @@ class CreateListingView(LoginRequiredMixin, View):
             listing.auctioneer = request.user
             listing.save()
             messages.success(request, "Listing created successfully")
-            return redirect("/")
+            return redirect("/dashboard/listings/")
         context = {"form": form, "categories": categories}
-        return render(request, "listings/create-listing.html", context)
+        return render(request, "listings/dashboard/create-listing.html", context)
 
 
 # ################
@@ -223,7 +225,7 @@ class UpdateListingStatus(LoginRequiredMixin, View):
                 return redirect(request.META.get("HTTP_REFERER"))
             listing.active = True
         listing.save()
-        return redirect(request.META.get("HTTP_REFERER"))
+        return redirect(request.META.get("HTTP_REFERER") or "/")
 
 
 class UpdateListingView(LoginRequiredMixin, View):
@@ -233,7 +235,10 @@ class UpdateListingView(LoginRequiredMixin, View):
             Listing, auctioneer=user, slug=kwargs.get("listing_slug")
         )
         form = CreateListingForm(
-            instance=listing, initial={"category": listing.category or "Other"}
+            initial={
+                "category": listing.category.slug if listing.category else "other"
+            },
+            instance=listing,
         )
         categories = Category.objects.all()
         context = {"listing": listing, "form": form, "categories": categories}

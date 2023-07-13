@@ -20,7 +20,7 @@ urlpatterns = [
         name="place-bid",
     ),
     path(
-        "listings/create",
+        "create-listing/",
         views.CreateListingView.as_view(),
         name="create-listing",
     ),

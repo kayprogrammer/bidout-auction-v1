@@ -3,13 +3,7 @@ from django.utils import timezone
 from .models import Category, Listing
 from apps.accounts.models import User
 from zoneinfo import ZoneInfo
-
-try:
-    category_choices = list(Category.objects.values_list("name", "name"))
-    category_choices.insert(0, ("", "Choose a Category"))
-    category_choices.append(("Other", "Other"))
-except:
-    category_choices = []
+import pytz
 
 
 class CreateListingForm(forms.ModelForm):
@@ -26,7 +20,7 @@ class CreateListingForm(forms.ModelForm):
         widget=forms.Textarea(attrs={"class": "form-control", "rows": "6"})
     )
     category = forms.ChoiceField(
-        choices=category_choices,
+        choices=[],
         widget=forms.Select(
             attrs={"class": "form-select form-select-md"},
         ),
@@ -60,12 +54,18 @@ class CreateListingForm(forms.ModelForm):
         )
     )
 
-    def clean_category(self):
-        category_name = self.cleaned_data.get("category")
+    def __init__(self, *args, **kwargs):
+        super(CreateListingForm, self).__init__(*args, **kwargs)
+        category_choices = list(Category.objects.values_list("slug", "name"))
+        category_choices.insert(0, ("", "Choose a Category"))
+        category_choices.append(("other", "Other"))
+        self.fields["category"].choices = category_choices
 
-        category = Category.objects.filter(name=category_name)
+    def clean_category(self):
+        category_slug = self.cleaned_data.get("category")
+        category = Category.objects.filter(slug=category_slug)
         if not category.exists():
-            if not category_name == "Other":
+            if not category_slug == "other":
                 raise forms.ValidationError("Please select a valid category.")
             self.fields["category"].required = False
             category = None
@@ -75,10 +75,13 @@ class CreateListingForm(forms.ModelForm):
 
     def clean_closing_date(self):
         closing_date = self.cleaned_data["closing_date"]
+
+        # Convert to UTC timezone
         closing_date = closing_date.replace(
             tzinfo=ZoneInfo(str(closing_date.tzinfo))
-        ).astimezone(timezone.utc)
-        if closing_date < timezone.now():
+        ).astimezone(pytz.utc)
+
+        if closing_date <= timezone.now():
             raise forms.ValidationError(
                 "Enter a datetime farther than the current datetime."
             )
