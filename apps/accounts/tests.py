@@ -4,16 +4,18 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.messages import get_messages
 from django.http.cookie import SimpleCookie
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 
-from apps.accounts.forms import CustomUserCreationForm
+from apps.accounts.forms import CustomSetPasswordForm, CustomUserCreationForm
 from apps.accounts.models import Timezone
 from apps.accounts.senders import email_verification_generate_token
 
 from apps.common.utils import TestUtil
-from unittest import mock
 import uuid
 
 settings.TESTING = True
+
+token_generator = PasswordResetTokenGenerator()
 
 
 class TestAccounts(TestCase):
@@ -25,6 +27,7 @@ class TestAccounts(TestCase):
     reset_password_url = "/accounts/reset-password/"
     reset_password_sent_url = "/accounts/reset-password-sent/"
     reset_password_confirm_url = "/accounts/reset/"
+    set_new_password_url = "/accounts/reset/Nw/set-password/"
     reset_password_complete_url = "/accounts/reset-password-complete/"
 
     login_url = "/accounts/login/"
@@ -56,13 +59,11 @@ class TestAccounts(TestCase):
         }
 
         # Verify that a new user can be registered successfully
-        mock.patch("apps.accounts.senders.Util", new="")
         response = self.client.post(self.register_url, user_in)
         self.assertEqual(response.status_code, 200)
         self.assertIsNone(response.context.get("form"))
 
         # Verify that a user with the same email cannot be registered again
-        mock.patch("apps.accounts.senders.Util", new="")
         response = self.client.post(self.register_url, user_in)
         self.assertIsNotNone(response.context.get("form").errors)
 
@@ -79,7 +80,6 @@ class TestAccounts(TestCase):
         self.assertTemplateUsed(response, "accounts/email-activation-failed.html")
 
         # Verify that the email verification succeeds with a valid link
-        mock.patch("apps.accounts.senders.Util", new="")
         response = self.client.get(
             f"{self.verify_email_url}{uid}/{token}/{new_user.id}/"
         )
@@ -96,7 +96,7 @@ class TestAccounts(TestCase):
 
         # Verify that an error is raised when attempting to resend the activation email for a user that doesn't exist
         self.client.cookies = SimpleCookie({"activation_email": "invalid@email.com"})
-        mock.patch("apps.accounts.senders.Util", new="")
+
         response = self.client.get(
             self.resend_activation_email_url,
         )
@@ -105,7 +105,7 @@ class TestAccounts(TestCase):
 
         # Verify that an unverified user can get a new email
         self.client.cookies = SimpleCookie({"activation_email": new_user.email})
-        mock.patch("apps.accounts.senders.Util", new="")
+
         # Then, attempt to resend the activation email
         response = self.client.get(self.resend_activation_email_url)
         self.assertTemplateUsed(response, "accounts/email-activation-request.html")
@@ -113,7 +113,7 @@ class TestAccounts(TestCase):
         # Verify that a verified user cannot get a new email
         new_user.is_email_verified = True
         new_user.save()
-        mock.patch("apps.accounts.senders.Util", new="")
+
         response = self.client.get(
             self.resend_activation_email_url,
         )
@@ -144,7 +144,6 @@ class TestAccounts(TestCase):
         )
 
         # Test for unverified credentials (email)
-        mock.patch("apps.accounts.senders.Util", new="")
         response = self.client.post(
             self.login_url,
             {"email": new_user.email, "password": "testpassword"},
@@ -166,6 +165,68 @@ class TestAccounts(TestCase):
             fetch_redirect_response=True,
         )
 
+    def test_reset_password(self):
+        new_user = self.new_user
+
+        # Test password reset page shows
+        response = self.client.get(self.reset_password_url)
+        self.assertTemplateUsed(response, "accounts/password-reset.html")
+
+        # Test email request successfully
+        response = self.client.post(self.reset_password_url, {"email": new_user.email})
+        self.assertRedirects(
+            response,
+            "/accounts/reset-password-sent/",
+            status_code=302,
+            target_status_code=200,
+            fetch_redirect_response=True,
+        )
+        token = response.context[0]["token"]
+        uid = response.context[0]["uid"]
+
+        # Check if password reset sent page works
+        response = self.client.get(self.reset_password_sent_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "accounts/password-reset-sent.html")
+
+        # Test the password reset confirmation fails for invalid or broken link
+        invalid_uid = urlsafe_base64_encode(force_bytes(uuid.uuid4()))
+        response = self.client.get(
+            f"{self.reset_password_confirm_url}{invalid_uid}/{token}/"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "accounts/password-reset-form.html")
+        self.assertContains(response, "INVALID TOKEN")
+
+        # Test the confirmation succeds for valid link
+        response = self.client.get(f"{self.reset_password_confirm_url}{uid}/{token}/")
+        self.assertRedirects(
+            response,
+            "/accounts/reset/Nw/set-password/",
+            status_code=302,
+            target_status_code=200,
+            fetch_redirect_response=True,
+        )
+
+        # Test set new password page shows
+        response = self.client.get(self.set_new_password_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "accounts/password-reset-form.html")
+        self.assertIsInstance(response.context["form"], CustomSetPasswordForm)
+
+        # Test password resets successfully
+        response = self.client.post(
+            self.set_new_password_url,
+            {"new_password1": "newpass12@jsjs", "new_password2": "newpass12@jsjs"},
+        )
+        self.assertRedirects(
+            response,
+            "/accounts/reset-password-complete/",
+            status_code=302,
+            target_status_code=200,
+            fetch_redirect_response=True,
+        )
+
     # def test_get_password_otp(self):
     #     verified_user = self.verified_user
     #     email = verified_user.email
@@ -173,7 +234,7 @@ class TestAccounts(TestCase):
     #     password = "testverifieduser123"
     #     user_dict = {"email": email, "password": password}
 
-    #     mock.patch("apps.accounts.senders.Util", new="")
+    #
     #     # Then, attempt to get password reset token
     #     response = self.client.post(self.send_password_reset_otp_url, user_dict)
     #     self.assertEqual(response.status_code, 200)
@@ -183,7 +244,7 @@ class TestAccounts(TestCase):
     #     )
 
     #     # Verify that an error is raised when attempting to get password reset token for a user that doesn't exist
-    #     mock.patch("apps.accounts.senders.Util", new="")
+    #
     #     response = self.client.post(
     #         self.send_password_reset_otp_url,
     #         {"email": "invalid@example.com"},
@@ -232,7 +293,7 @@ class TestAccounts(TestCase):
     #     # Verify that password reset succeeds
     #     Otp.objects.create(user_id=verified_user.id, code=otp)
     #     password_reset_data["otp"] = otp
-    #     mock.patch("apps.accounts.senders.Util", new="")
+    #
     #     response = self.client.post(
     #         self.set_new_password_url,
     #         password_reset_data,
