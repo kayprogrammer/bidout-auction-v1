@@ -3,14 +3,15 @@ from django.conf import settings
 from django.http import HttpResponseNotFound
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils import timezone
-from datetime import timedelta
 
-from io import BytesIO
-from PIL import Image
 from apps.common.utils import TestUtil
 
 from apps.listings.models import Bid, WatchList
 from apps.listings.forms import CreateListingForm, UpdateProfileForm
+
+from datetime import timedelta
+from io import BytesIO
+from PIL import Image
 import json
 
 settings.TESTING = True

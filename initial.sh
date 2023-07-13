@@ -11,7 +11,7 @@ done
 # Run migrations
 python manage.py migrate --no-input
 
-run tests
+# run tests
 pytest --disable-warnings -vv -x
 
 
