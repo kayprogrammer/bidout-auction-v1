@@ -41,6 +41,7 @@ THIRD_PARTY_APPS = [
     "cloudinary",
     "debug_toolbar",
     "import_export",
+    "whitenoise.runserver_nostatic",
 ]
 
 LOCAL_APPS = [
