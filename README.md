@@ -48,6 +48,8 @@ OR
 ```
 
 #### CLIENT
+#### Live Url: [BidOut Docs](https://bidout.vercel.app/) 
+
 ![alt text](https://github.com/kayprogrammer/bidout-auction-v1/blob/main/display/display1.png?raw=true)
 ![alt text](https://github.com/kayprogrammer/bidout-auction-v1/blob/main/display/display2.png?raw=true)
 ![alt text](https://github.com/kayprogrammer/bidout-auction-v1/blob/main/display/display3.png?raw=true)
