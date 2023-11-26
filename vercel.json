@@ -10,10 +10,10 @@
             }
         },
         {
-            "src": "deploy.sh",
+            "src": "build_files.sh",
             "use": "@vercel/static-build",
             "config": {
-                "distDir": "staticfiles"
+                "distDir": "staticfiles_build"
             }
         }
     ],
@@ -24,7 +24,7 @@
         },
         {
             "src": "/(.*)",
-            "dest": "/bidout/wsgi.py"
+            "dest": "bidout/wsgi.py"
         }
     ]
 }
