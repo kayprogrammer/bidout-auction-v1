@@ -176,7 +176,7 @@ logging.config.dictConfig(
                 "level": "INFO",
                 "class": "logging.FileHandler",
                 "formatter": "file",
-                "filename": "logs/whatsapp_clone_v1.log",
+                "filename": "logs/bidout.log",
             },
             "django.server": DEFAULT_LOGGING["handlers"]["django.server"],
         },
