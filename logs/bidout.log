@@ -19332,3 +19332,4 @@ TypeError: argument of type 'NoneType' is not iterable
 2023-07-13 18:39:09,737 django.request WARNING  Not Found: /dashboard/listings/invalid_slug/update/
 2023-07-13 18:39:12,454 django.request WARNING  Not Found: /watch-list/
 2023-07-13 18:39:16,799 django.utils.autoreload INFO     Watching for file changes with StatReloader
+2023-11-26 15:35:38,480 django.utils.autoreload INFO     Watching for file changes with StatReloader
