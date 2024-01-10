@@ -19,7 +19,7 @@ class SiteDetailAdmin(admin.ModelAdmin):
         return False
 
     def changelist_view(self, request, extra_context=None):
-        obj = self.model.objects.get_or_create()
+        obj, created = self.model.objects.get_or_create()
         return HttpResponseRedirect(
             reverse(
                 "admin:%s_%s_change"
