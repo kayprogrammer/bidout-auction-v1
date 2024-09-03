@@ -49,8 +49,9 @@ class Util:
 
         email_message = EmailMessage(subject=subject, body=message, to=[user.email])
         email_message.content_subtype = "html"
+        email_message.send()
 
-        MessageThread(email_message).start()
+        #MessageThread(email_message).start()
 
     @staticmethod
     def send_welcome_email(request, user):
