@@ -131,8 +131,8 @@ class CustomPasswordResetForm(PasswordResetForm):
             context["name"]
             html_email = render_to_string(html_email_template_name, context)
             email_message.attach_alternative(html_email, "text/html")
-
-        MessageThread(email_message).start()
+        email_message.send()
+        # MessageThread(email_message).start()
 
 
 class CustomSetPasswordForm(SetPasswordForm):
